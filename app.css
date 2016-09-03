@@ -1,3 +1,96 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+  padding: 0 20px;
+}
+
+#topbar {
+  font-family: 'Raleway', sans-serif;
+  height: 150px;
+  overflow: hidden;
+  text-align: center;
+  position: relative;
+  background: url('beach.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position-y: 52%;
+  text-shadow: 0 2px 2px #292929;
+  -webkit-text-stroke: 1px #333;
+}
+
+#topbar > video {
+  vertical-align: middle;
+  margin-top: -200px;
+}
+
+.overlay {
+  background: rgba(255,255,255,0.75);
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay > h1 {
+  font-size: 4em;
+}
+
+#nav {
+  margin: 12px auto;
+  text-align: center;
+}
+
+a.button {
+  text-decoration: none;
+  color: #fff;
+  display: inline-block;
+  text-align: center;
+}
+
+a.button#sign-in {
+  width: 100px;
+  position: fixed;
+  top: 0;
+  z-index: 1;
+  height: 20px;
+  background: rgba(230, 92, 0, 0.7);
+  padding: 6px 0;
+  border-radius: 0 0 10px 10px;
+  transition: background 0.3s ease;
+  -webkit-transition: background 0.3s ease;
+  -moz-transition: background 0.3s ease;
+  -o-transition: background 0.3s ease;
+}
+
+a.button#sign-in:hover, a.button#sign-in:focus {
+  background: rgba(255, 117, 26, 0.7);
+}
+
+#nav > a.button {
+  box-shadow: none;
+  background: linear-gradient(to bottom,#0066ff,#0047b3);
+  width: 16.2%;
+  padding: 10px 0;
+  font-size: 12px;
+}
+
+#main {
+  text-align: center;
+  clear: both;
+}
+
 footer {
   font-size: 10px;
+}
+
+/* small only */
+@media only screen and (max-width: 50em) {
+  #topbar {
+    background: #fff;
+  }
+  
+  .overlay > h1 {
+    font-size: 2.5em;
+  }
 }
