@@ -4,6 +4,10 @@ body {
   padding: 0 20px;
 }
 
+p {
+  font-size: 14px;
+}
+
 #topbar {
   font-family: 'Raleway', sans-serif;
   height: 150px;
@@ -40,6 +44,10 @@ body {
   margin: 12px auto;
   text-align: center;
 }
+
+#greeting > h2 {
+  color: linear-gradient(to right, #c2f0f0, #84e1e1);
+} 
 
 a.button {
   text-decoration: none;
@@ -80,6 +88,12 @@ a.button#sign-in:hover, a.button#sign-in:focus {
   clear: both;
 }
 
+#main > div:first-child {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
 footer {
   font-size: 10px;
 }
@@ -92,5 +106,12 @@ footer {
   
   .overlay > h1 {
     font-size: 2.5em;
+  }
+
+  #nav > a.button {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: #333;
   }
 }
