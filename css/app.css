@@ -10,10 +10,10 @@ body {
   overflow: hidden;
   text-align: center;
   position: relative;
-  background: url('beach.jpg');
+  background: url('../images/view.jpg');
   background-size: cover;
   background-repeat: no-repeat;
-  background-position-y: 52%;
+  background-position-y: 57%;
   text-shadow: 0 2px 2px #292929;
   -webkit-text-stroke: 1px #333;
 }
@@ -24,7 +24,7 @@ body {
 }
 
 .overlay {
-  background: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.6);
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
   display: flex;
