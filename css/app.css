@@ -4,6 +4,10 @@ body {
   padding: 0 20px;
 }
 
+p {
+  font-size: 14px;
+}
+
 #topbar {
   font-family: 'Raleway', sans-serif;
   height: 150px;
@@ -41,11 +45,16 @@ body {
   text-align: center;
 }
 
+#greeting > h2 {
+  color: linear-gradient(to right, #c2f0f0, #84e1e1);
+} 
+
 a.button {
   text-decoration: none;
   color: #fff;
   display: inline-block;
   text-align: center;
+  cursor: pointer;
 }
 
 a.button#sign-in {
@@ -67,12 +76,34 @@ a.button#sign-in:hover, a.button#sign-in:focus {
   background: rgba(255, 117, 26, 0.7);
 }
 
+button#menu-toggle {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(255,255,255,0.3);
+  font-size: 36px;
+  z-index: 1;
+  border: none;
+  padding: 20px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: color 0.3s ease;
+  -webkit-transition: color 0.3s ease;
+  -moz-transition: color 0.3s ease;
+  -o-transition: color 0.3s ease;
+}
+
+button#menu-toggle:hover, button#menu-toggle:focus {
+  color: #555;
+}
+
 #nav > a.button {
-  box-shadow: none;
   background: linear-gradient(to bottom,#0066ff,#0047b3);
   width: 16.2%;
   padding: 10px 0;
   font-size: 12px;
+  border: 2px solid #fff;
 }
 
 #main {
@@ -80,17 +111,55 @@ a.button#sign-in:hover, a.button#sign-in:focus {
   clear: both;
 }
 
+#main > div:first-child {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
 footer {
   font-size: 10px;
 }
 
+/* large only */
+@media only screen and (min-width: 50.001em) {
+  #nav > a.button:hover, #nav > a.button:focus {
+    transition: border-color 0.3s ease;
+    -webkit-transition: border-color  0.3s ease;
+    -moz-transition: border-color 0.3s ease;
+    -o-transition: border-color 0.3s ease;
+  }
+
+  #nav > a.button:hover, #nav > a.button:focus {
+    border-color: #ccc;
+  }
+}
+
 /* small only */
 @media only screen and (max-width: 50em) {
+  button#menu-toggle {
+    display: block;
+  }
+
+  a.button#sign-in {
+    display: none;
+  }
+
   #topbar {
     background: #fff;
   }
   
   .overlay > h1 {
     font-size: 2.5em;
+  }
+  
+  #nav {
+    display: none;
+  }
+
+  #nav > a.button {
+    width: 100%;
+    background: transparent;
+    color: #333;
   }
 }
