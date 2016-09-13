@@ -15,7 +15,7 @@ p {
   text-align: center;
   position: relative;
   background: url('../images/view.jpg');
-  background-size: cover;
+  background-size: 107%;
   background-repeat: no-repeat;
   background-position-y: 57%;
   text-shadow: 0 2px 2px #292929;
@@ -98,12 +98,50 @@ button#menu-toggle:hover, button#menu-toggle:focus {
   color: #555;
 }
 
-#nav > a.button {
+.navBtnContainer {
+  width: 15%;
+  text-align: center;
+  display: inline-block;
+  cursor: pointer;
+}
+
+#nav a.button {
   background: linear-gradient(to bottom,#0066ff,#0047b3);
-  width: 16.2%;
+  width: 50px;
   padding: 10px 0;
-  font-size: 12px;
   border: 2px solid #fff;
+  /*
+  transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  */
+}
+
+#nav a.button:last-child {
+  margin-right: 0;
+}
+
+#nav a.button span {
+  display: none;
+  font-size: 12px;
+}
+
+#nav a.button i {
+  display: inline;
+  font-size: 22px;
+}
+
+#nav .navBtnContainer:hover a.button, #nav .navBtnContainer:focus a.button {
+  width: 100%;
+}
+
+#nav .navBtnContainer:hover span, #nav .navBtnContainer:focus span {
+  display: inline;
+}
+
+#nav .navBtnContainer:hover i, #nav .navBtnContainer:focus i {
+  display: none;
 }
 
 #main {
