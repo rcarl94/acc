@@ -40,11 +40,6 @@ p {
   font-size: 4em;
 }
 
-#nav {
-  margin: 12px auto;
-  text-align: center;
-}
-
 #greeting > h2 {
   padding-bottom: 10px;
   width: 10%;
@@ -95,7 +90,8 @@ button#menu-toggle {
   left: 0;
   background: rgba(255,255,255,0.3);
   font-size: 36px;
-  z-index: 1;
+  color: #333;
+  z-index: 10;
   border: none;
   padding: 20px;
   cursor: pointer;
@@ -106,8 +102,17 @@ button#menu-toggle {
   -o-transition: color 0.3s ease;
 }
 
+button#menu-toggle i:nth-child(2) {
+  display: none;
+}
+
 button#menu-toggle:hover, button#menu-toggle:focus {
   color: #555;
+}
+
+#nav {
+  margin: 12px auto;
+  text-align: center;
 }
 
 .navBtnContainer {
@@ -115,7 +120,7 @@ button#menu-toggle:hover, button#menu-toggle:focus {
   text-align: center;
   display: inline-block;
   cursor: pointer;
-  height: 50px;
+  height: 80px;
   overflow: hidden;
 }
 
@@ -137,7 +142,7 @@ button#menu-toggle:hover, button#menu-toggle:focus {
 
 #nav a.button i {
   display: block;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 #nav .navBtnContainer a.button * {
@@ -145,10 +150,6 @@ button#menu-toggle:hover, button#menu-toggle:focus {
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
   -o-transition: all 0.3s ease;
-}
-
-#nav .navBtnContainer:hover i, #nav .navBtnContainer:focus i {
-  margin-top: -24%;
 }
 
 #main {
@@ -177,7 +178,9 @@ footer {
 
 /* large only */
 @media only screen and (min-width: 50.001em) {
-
+  #nav .navBtnContainer:hover i, #nav .navBtnContainer:focus i {
+    margin-top: -24%;
+  }
 }
 
 /* small only */
@@ -200,12 +203,25 @@ footer {
   }
   
   #nav {
-    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background: rgba(255,255,255,0.8);
+    z-index: 1;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
   }
-
-  #nav > .navBtnContainer {
+  
+  .navBtnContainer {
+    display: none;
     width: 100%;
-    background: transparent;
+  }
+  
+  #nav a.button {
+    background: rgba(255,255,255,0.3);
+    width: 100%;
     color: #333;
   }
   
