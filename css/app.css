@@ -20,6 +20,12 @@ p {
   background-position-y: 57%;
   text-shadow: 0 2px 2px #292929;
   -webkit-text-stroke: 1px #333;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 #topbar > video {
@@ -38,6 +44,12 @@ p {
 
 .overlay > h1 {
   font-size: 4em;
+  cursor: pointer;
+}
+
+.overlay > h1 > a {
+  text-decoration: none;
+  color: #333;
 }
 
 #greeting > h2 {
