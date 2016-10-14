@@ -3,11 +3,11 @@
   <head>
     <link rel="stylesheet" type="text/css" href="css/app.css" />
     <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
     <script src="https://use.fontawesome.com/23995a4842.js"></script>
   </head>
   <body>
-    <a href="#" class="button" id="sign-in">Sign In</a>
+    <a href="signin-modal" class="button" id="signin">Sign In</a>
     <div id="topbar">
       <!--
       <video width="100%" autoplay loop muted>
@@ -51,7 +51,19 @@
       </div>
     </div>
     <footer>Randy Anderson's Silver Beach Towers Condo &copy; Ryan Carl, 2016</footer>
-    
+	
+	<div id="singin-modal">
+    <div style="text-align:right;padding-right:30px"><a id="close-modal-btn" class="close-signin-modal">&times;</a></div>
+    <div class="modal-content">
+      <div class="panel">
+        <input id="un" type="text" />
+        <input id="pwd" type="text" />
+        <button id="submit-signin">Sign In</button>
+      </div>
+    </div>
+  </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="js/animatedModal.min.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

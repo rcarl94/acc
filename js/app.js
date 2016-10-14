@@ -17,4 +17,6 @@ $(document).ready(function() {
       $("#nav").css("width","auto");
     }
   });
+  
+  $("#signin").animatedModal();
 });
