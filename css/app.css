@@ -76,7 +76,7 @@ a.button {
   cursor: pointer;
 }
 
-a.button#sign-in {
+a.button#signin {
   width: 100px;
   position: fixed;
   top: 0;
