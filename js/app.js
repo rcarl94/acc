@@ -18,5 +18,12 @@ $(document).ready(function() {
     }
   });
   
-  $("#signin").animatedModal();
+  $("#signin").animatedModal({
+    modalTarget: "signin-modal",
+    color: "rgba(255,255,255,0.8)",
+    afterOpen: function() {
+    },
+    afterClose: function() {
+    }
+  });
 });
