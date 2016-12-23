@@ -196,6 +196,15 @@ footer {
   width: 80%;
   margin: 30px auto;
   padding: 25px 0;
+  text-align: center;
+}
+
+.panel input {
+  display: block;
+  font-size: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
 }
 
 /* large only */
