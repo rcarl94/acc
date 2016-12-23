@@ -190,6 +190,11 @@ footer {
   padding-top: 10px;
 }
 
+a#close-modal-btn {
+  font-size: 48px;
+  cursor: pointer;
+}
+
 .panel {
   background: #fff;
   box-shadow: 2px 2px 10px #444;
@@ -205,6 +210,12 @@ footer {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 20px;
+}
+
+#submit-signin {
+  font-size: 22px;
+  padding: 10px 20px;
+  cursor: pointer;
 }
 
 /* large only */
