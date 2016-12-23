@@ -158,9 +158,8 @@ button#menu-toggle:hover, button#menu-toggle:focus {
   clear: both;
 }
 
-#main > div {
-  margin-left: auto;
-  margin-right: auto;
+#main > div:first-child {
+  margin-top: 30px;
 }
 
 #motto {
