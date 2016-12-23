@@ -26,7 +26,6 @@ p {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  box-shadow: 0 0 40px -2px #333 inset;
 }
 
 #topbar > video {
@@ -41,6 +40,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0 40px -2px #333 inset;
 }
 
 .overlay > h1 {
