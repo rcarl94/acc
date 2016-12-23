@@ -173,6 +173,7 @@ footer {
   margin: 40px 30px;
   border-top: 1px solid #ccc;
   padding-top: 10px;
+  clear: both;
 }
 
 a#close-modal-btn {
