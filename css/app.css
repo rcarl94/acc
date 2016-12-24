@@ -203,11 +203,10 @@ a#close-modal-btn {
   margin-bottom: 20px;
 }
 
-#submit-signin {
+button {
   font-size: 22px;
   padding: 10px 20px;
   cursor: pointer;
-  background: linear-gradient(to bottom,#0066ff,#0047b3);
 }
 
 #request-form {
@@ -226,8 +225,6 @@ a#close-modal-btn {
 }
 
 #request-submit {
-  padding: 10px 20px;
-  font-size: 18px;
   display: block;
   margin-left: auto;
   margin-right: auto;
