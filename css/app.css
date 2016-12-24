@@ -65,6 +65,15 @@ p {
   min-height: 55px;
 }
 
+#greeting > div:first-child {
+  float: left;
+}
+
+#greeting > div:nth-child(2) {
+  float: right;
+  width: 75%;
+}
+
 a.button {
   text-decoration: none;
   color: #fff;
@@ -274,6 +283,10 @@ button {
     background: #fff;
     margin-top: 55px;
   }
+
+  .overlay {
+    box-shadow: none;
+  }
   
   .overlay > h1 {
     font-size: 2.5em;
@@ -313,6 +326,10 @@ button {
   
   #motto {
     font-size: 16px;
+  }
+
+  #greeting > div:first-child, #greeting > div:nth-child(2) {
+    float: none;
   }
   
   #greeting > h2 {
