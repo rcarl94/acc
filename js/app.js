@@ -17,6 +17,14 @@ $(document).ready(function() {
       $("#nav").css("width","auto");
     }
   });
+
+  $("#submit-signin").click(function() {
+    if ($("#pwd").val() == "and4kids") {
+      $("#sbt-nav-btn").hide();
+      $("#approve-nav-btn").show();
+    }
+  });
+
   
   $("#signin").animatedModal({
     modalTarget: "signin-modal",
