@@ -22,6 +22,7 @@ $(document).ready(function() {
     if ($("#pwd").val() == "and4kids") {
       $("#sbt-nav-btn").hide();
       $("#approve-nav-btn").css("display","inline-block");
+      $("#signin").hide();
       $(".close-signin-modal").click();
     }
   });
