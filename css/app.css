@@ -54,6 +54,7 @@ p {
 }
 
 #greeting {
+  padding: 30px;
   text-align: left;
 }
 
