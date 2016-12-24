@@ -263,6 +263,11 @@ button {
   display: inline-block;
 }
 
+textarea#add-info {
+  width: 50%;
+  height: 100px;
+}
+
 /* large only */
 @media only screen and (min-width: 50.001em) {
   #nav .navBtnContainer:hover i, #nav .navBtnContainer:focus i {
