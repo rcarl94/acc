@@ -236,6 +236,14 @@ button {
 
 #photos {
   clear: both;
+  margin-top: 25px;
+  border-top: 2px solid #c8c8c8;
+  padding-top: 20px;
+}
+
+#photos img {
+  height: 250px;
+  display: inline-block;
 }
 
 /* large only */
