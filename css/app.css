@@ -234,6 +234,10 @@ button {
   display: none;
 }
 
+#photos {
+  clear: both;
+}
+
 /* large only */
 @media only screen and (min-width: 50.001em) {
   #nav .navBtnContainer:hover i, #nav .navBtnContainer:focus i {
