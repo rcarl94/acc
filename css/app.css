@@ -217,6 +217,13 @@ a#close-modal-btn {
 
 #request-form label {
   font-size: 24px;
+  display: block;
+}
+
+#request-submit {
+  padding: 10px 20px;
+  font-size: 18px;
+  display: block;
 }
 
 /* large only */
