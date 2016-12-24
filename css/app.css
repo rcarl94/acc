@@ -86,6 +86,7 @@ a.button#signin {
   width: 100px;
   position: fixed;
   top: 0;
+  right: 40px;
   z-index: 1;
   height: 20px;
   background: rgba(230, 92, 0, 0.7);
@@ -328,6 +329,10 @@ button {
     font-size: 16px;
   }
 
+  #greeting {
+    text-align: center;
+  }
+
   #greeting > div:first-child, #greeting > div:nth-child(2) {
     float: none;
   }
@@ -338,5 +343,11 @@ button {
   
   #greeting > p {
     width: auto;
+  }
+
+  #photos img {
+    display: block;
+    height: auto;
+    width: 80%;
   }
 }
