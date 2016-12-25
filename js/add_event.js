@@ -50,7 +50,28 @@ function handleAuthClick(event) {
  * once client library is loaded.
  */
 function loadCalendarApi() {
-  gapi.client.load('calendar', 'v3', listUpcomingEvents);
+  gapi.client.load('calendar', 'v3', addEvent);
+}
+
+function addEvent() {
+  var event = {
+    'summary': $('#name').val(),
+    'description': $('#add-info').val(),
+    'start': {
+      'date': $('#start-date').val(),
+    },
+    'end': {
+      'date': $('#end-date').val(),
+    }
+  };
+  var request = gapi.client.calendar.events.insert({
+    'calendarId': 'destincondocalendar@outlook.com',
+    'resource': event
+  });
+
+  request.execute(function(e) {
+    $('#request-result').html("Request submitted for " + e.summary + " has been submitted");
+  });
 }
 
 /**

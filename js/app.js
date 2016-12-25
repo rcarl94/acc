@@ -1,29 +1,52 @@
 $(document).ready(function() {
+  var PWD = "and4kids";
+  var login_cookie = "dcc_login";
+  var ca = document.cookie.split(";");
+  for (var i=0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(login_cookie) == 0) {
+      if (c.substring(login_cookie.length+1,c.length) == 1) {
+        $("#sbt-nav-btn").css("display","none !important");
+        $("#approve-nav-btn").css("display",$(".navBtnContainer").css("display"));
+        $("#approve-nav-btn").removeClass("locked");
+        $("#signin").hide();
+        $(".close-signin-modal").click();
+      }
+    }
+  }
+
   $("#menu-toggle").click(function() {
-    if ($("#menu-toggle i:first-child").css("display") == "inline-block") {
+    if ($("#menu-toggle i:first-child").css("display") != "none") {
       $("#menu-toggle i:first-child").fadeOut(function() {
         $("#menu-toggle i:nth-child(2)").fadeIn();
       });
       $("#nav").css("height","100%");
       $("#nav").css("width","100%");
       $(".navBtnContainer").css("display","block");
-      $(".navBtnContainer").css("display","block");
+      $(".navBtnContainer.locked").css("display","none");
     } else {
       $("#menu-toggle i:nth-child(2)").fadeOut(function() {
         $("#menu-toggle i:first-child").fadeIn();
       });
-      $(".navBtnContainer").hide();
+      $(".navBtnContainer").css("display","none");
       $("#nav").css("height","auto");
       $("#nav").css("width","auto");
     }
   });
 
   $("#submit-signin").click(function() {
-    if ($("#pwd").val() == "and4kids") {
-      $("#sbt-nav-btn").hide();
-      $("#approve-nav-btn").css("display","inline-block");
+    if ($("#pwd").val() == PWD) {
+      $("#sbt-nav-btn").css("display","none !important");
+      $("#approve-nav-btn").css("display",$(".navBtnContainer").css("display"));
+      $("#approve-nav-btn").removeClass("locked");
       $("#signin").hide();
       $(".close-signin-modal").click();
+      var d = new Date();
+      d.setTime(d.getTime + (60*60*1000));
+      document.cookie = login_cookie + "=1;expires=" + d.toUTCString(); + ";";
     }
   });
 
@@ -37,33 +60,7 @@ $(document).ready(function() {
     }
   });
 
-  function listUpcomingEvents() {
-    gapi.client.load('calendar', 'v3', listUpcomingEvents);
-
-    var request = gapi.client.calendar.events.list({
-      'calendarId': 'destincondocalendar@outlook.com',
-      'timeMin': (new Date()).toISOString(),
-      'showDeleted': false,
-      'singleEvents': true,
-      'orderBy': 'startTime'
-    });
-
-    request.execute(function(resp) {
-      var events = resp.items;
-
-      if (events.length > 0) {
-        for (i = 0; i < events.length; i++) {
-          var event = events[i];
-          var when = event.start.dateTime;
-          if (!when) {
-            when = event.start.date;
-          }
-          $("#requests").append("<div class='request'><span>Name</span>" + event.summary + "<br><span>Dates</span>" + event.start.date + " - " + event.end.date + "<br><span>Additional Info</span>" + event.description + "</div>");
-        }
-      } else {
-        $("#requests").append('No upcoming events found.');
-      }
-
-    });
-  }
+  $("#request-submit").click(function() {
+    checkAuth();
+  });
 });

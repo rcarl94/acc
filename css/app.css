@@ -247,10 +247,6 @@ button {
   margin-right: auto;
 }
 
-#approve-nav-btn {
-  display: none;
-}
-
 #photos {
   clear: both;
   margin-top: 25px;
@@ -268,11 +264,24 @@ textarea#add-info {
   height: 100px;
 }
 
+#approve-nav-btn {
+  display: none;
+}
+
+.locked {
+  display: none;
+}
+
+#main #videos iframe {
+  width: 50%;
+}
+
 /* large only */
 @media only screen and (min-width: 50.001em) {
   #nav .navBtnContainer:hover i, #nav .navBtnContainer:focus i {
     margin-top: -50px;
   }
+
 }
 
 /* small only */
@@ -299,11 +308,12 @@ textarea#add-info {
   }
   
   #nav {
-    position: absolute;
-    top: 60px;
+    position: fixed;
+    top: -15px;
+    padding-top: 30px;
     left: 0;
-    background: rgba(255,255,255,0.8);
-    z-index: 1;
+    background: rgba(255,255,255,0.9);
+    z-index: 100;
     transition: all 0.3s ease;
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
@@ -343,6 +353,14 @@ textarea#add-info {
     margin-right: auto;
     margin-left: auto;
   }
+
+  #greeting > div:nth-child(2) {
+    width: 100%;
+  }
+
+  #greeting > div:nth-child(2) > p {
+    text-align: left;
+  }
   
   #greeting > h2 {
     width: 100%;
@@ -358,5 +376,17 @@ textarea#add-info {
     margin-right: auto;
     height: auto;
     width: 80%;
+  }
+
+  #main #videos iframe {
+    width: 100%;
+  }
+
+  textarea#add-info {
+    width: 90%;
+  }
+
+  footer {
+    text-align: center;
   }
 }
