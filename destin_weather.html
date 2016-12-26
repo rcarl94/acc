@@ -3,9 +3,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width">
     <title>Destin Condo Calendar</title>
+    <link rel="shortcut icon" type="image/x-icon" href="images/schedule.ico" />
     <link rel="stylesheet" type="text/css" href="css/app.css" />
     <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
     <script src="https://use.fontawesome.com/23995a4842.js"></script>
   </head>
   <body>
@@ -59,7 +61,24 @@
       </a><div id="awtd1482531558226" class="aw-widget-36hour"  data-locationkey="2231011" data-unit="f" data-language="en-us" data-useip="false" data-uid="awtd1482531558226" data-editlocation="false" data-lifestyle="fishing"></div><script type="text/javascript" src="http://oap.accuweather.com/launch.js"></script>
       </div>
     </div>
+    <div id="signin-modal">
+     <div style="text-align:right;padding-right:30px"><a id="close-modal-btn" class="close-signin-modal">&times;</a></div>
+      <div class="modal-content">
+        <div class="panel">
+          <!--    
+          <label for="un">Username
+            <input id="un" type="text" />
+          </label>
+          -->     
+          <label for="pwd">Password
+            <input id="pwd" type="password" />
+          </label>
+          <button id="submit-signin">Sign In</button>
+        </div>  
+      </div>  
+    </div> 
     <footer>The Anderson's Condo Calendar &copy; Ryan Carl, 2016</footer>
+    <script src="js/animatedModal.min.js"></script>
     <script src='js/app.js'></script>
   </body>
 </html>

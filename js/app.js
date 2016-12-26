@@ -1,6 +1,5 @@
 $(document).ready(function() {
-  var PWD = "and4kids";
-  var login_cookie = "dcc_login";
+  /*
   var ca = document.cookie.split(";");
   for (var i=0; i < ca.length; i++) {
     var c = ca[i];
@@ -9,7 +8,7 @@ $(document).ready(function() {
     }
     if (c.indexOf(login_cookie) == 0) {
       if (c.substring(login_cookie.length+1,c.length) == 1) {
-        $("#sbt-nav-btn").css("display","none !important");
+        $("#reserve-nav-btn").css("display","none");
         $("#approve-nav-btn").css("display",$(".navBtnContainer").css("display"));
         $("#approve-nav-btn").removeClass("locked");
         $("#signin").hide();
@@ -17,6 +16,7 @@ $(document).ready(function() {
       }
     }
   }
+  */
 
   $("#menu-toggle").click(function() {
     if ($("#menu-toggle i:first-child").css("display") != "none") {
@@ -36,10 +36,10 @@ $(document).ready(function() {
       $("#nav").css("width","auto");
     }
   });
-
+/*
   $("#submit-signin").click(function() {
     if ($("#pwd").val() == PWD) {
-      $("#sbt-nav-btn").css("display","none !important");
+      $("#reserve-nav-btn").css("display","none");
       $("#approve-nav-btn").css("display",$(".navBtnContainer").css("display"));
       $("#approve-nav-btn").removeClass("locked");
       $("#signin").hide();
@@ -49,15 +49,21 @@ $(document).ready(function() {
       document.cookie = login_cookie + "=1;expires=" + d.toUTCString(); + ";";
     }
   });
-
+*/
   
   $("#signin").animatedModal({
     modalTarget: "signin-modal",
     color: "rgba(255,255,255,0.8)",
     afterOpen: function() {
+      $("#pwd").focus();
     },
     afterClose: function() {
     }
+  });
+
+  $("#result-btn").animatedModal({
+    modalTarget: "result-modal",
+    color: "rgba(255,255,255,0.8)",
   });
 
   $("#request-submit").click(function() {

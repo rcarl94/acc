@@ -192,7 +192,7 @@ button#menu-toggle:hover, button#menu-toggle:focus {
 
 footer {
   font-size: 10px;
-  margin: 40px 30px;
+  margin: 100px 30px;
   border-top: 1px solid #ccc;
   padding-top: 10px;
   clear: both;
@@ -236,9 +236,18 @@ button {
 }
 
 #request-form label {
-  font-size: 24px;
-  display: block;
+  font-size: 20px;
   margin-bottom: 20px;
+}
+
+#request-form #add-info-label {
+  display: block;
+  margin-top: 20px;
+}
+
+#request-form div {
+  width: 30%;
+  display: inline-block;
 }
 
 #request-submit {
@@ -273,7 +282,46 @@ textarea#add-info {
 }
 
 #main #videos iframe {
-  width: 50%;
+  width: 49%;
+  height: 350px;
+}
+
+.request span {
+  font-size: 24px;
+  margin-right: 15px;
+}
+
+.request {
+  text-align: left;
+  border: 1px solid #c8c8c8;
+  padding: 10px;
+}
+
+.request .request-info {
+  float: left;
+}
+
+.request button {
+  float: right;
+  clear: right;
+  padding: 5px 10px;
+  width: 66px;
+  border: none;
+  background: transparent;
+}
+
+.request button.approve {
+  color: #36c471; 
+  margin-bottom: 10px;
+}
+
+.request button.deny {
+  color: #d84843;
+}
+
+#authorize-button {
+  display: block;
+  margin: 30px auto;
 }
 
 /* large only */
@@ -380,6 +428,14 @@ textarea#add-info {
 
   #main #videos iframe {
     width: 100%;
+  }
+
+  #request-form div {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    margin-bottom: 20px;
   }
 
   textarea#add-info {

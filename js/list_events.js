@@ -30,6 +30,7 @@ function handleAuthResult(authResult) {
     // Show auth UI, allowing the user to initiate authorization by
     // clicking authorize button.
     authorizeDiv.style.display = 'inline';
+    $("#signin").click();
   }
 }
 
@@ -50,28 +51,33 @@ function handleAuthClick(event) {
  * once client library is loaded.
  */
 function loadCalendarApi() {
-  gapi.client.load('calendar', 'v3', addEvent);
+  gapi.client.load('calendar', 'v3', listEvents);
 }
 
-function addEvent() {
-  var event = {
-    'summary': $('#name').val(),
-    'description': $('#add-info').val(),
-    'start': {
-      'date': $('#start-date').val(),
-    },
-    'end': {
-      'date': $('#end-date').val(),
-    }
-  };
-  var request = gapi.client.calendar.events.insert({
-    'calendarId': 'rdanderson1965@gmail.com',
-    'resource': event
-  });
+function listEvents() {
+  var request = gapi.client.calendar.events.list({
+    'calendarId': '',
+    'timeMin': (new Date()).toISOString(),
+    'showDeleted': false,
+    'singleEvents': true,
+    'orderBy': 'startTime'
+  });     
 
-  request.execute(function(e) {
-    $('#request-result').html("Request for " + e.summary + " has been submitted");
-    $('#result-btn').click();
-    $('#request-form').trigger('reset');
+  request.execute(function(resp) {
+    $(".close-signin-modal").click();
+    var events = resp.items;
+
+    if (events.length > 0) {
+      for (i = 0; i < events.length; i++) {
+        var event = events[i];
+        var when = event.start.dateTime;
+        if (!when) {
+          when = event.start.date;
+        }       
+        $("#requests").append("<div class='request'><div class='request-info'><span>Name</span>" + event.summary + "<br><span>Dates</span>" + event.start.date + " to " + event.end.date + "<br><span>Additional Info</span>" + event.description + "</div><button class='approve'><i class='fa fa-check'></i></button><button class='deny'><i class='fa fa-ban'></i></button><div style='clear:both'></div></div>");
+      }       
+    } else {
+      document.getElementById("requests").append('No upcoming events found.');
+    }       
   });
 }

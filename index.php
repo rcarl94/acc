@@ -1,9 +1,21 @@
+<?php
+  $user = $_SERVER['REMOTE_USER'];
+  echo '$user';
+  if (strcmp($user,"rdanderson") {
+    echo "<script type='text/javascript'>",
+         "$('#signin').hide();",
+         "$('.close-signin-modal').click();",
+         "</script>";
+  }
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width">
     <title>Destin Condo Calendar</title>
+    <link rel="shortcut icon" type="image/x-icon" href="images/schedule.ico" />
     <link rel="stylesheet" type="text/css" href="css/app.css" />
     <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto|Muli" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
@@ -13,14 +25,6 @@
     -->
   </head>
   <body onload="">
-    <div id="authorize-div" style="display: none">
-      <span>Authorize access to Google Calendar API</span>
-      <!--Button for the user to click to initiate auth sequence -->
-      <button id="authorize-button" onclick="handleAuthClick(event)">
-        Authorize
-      </button>
-    </div>
-    <pre id="output"></pre>
     <a href="#signin-modal" class="button" id="signin">Sign In</a>
     <div id="topbar">
       <!--
@@ -79,7 +83,7 @@
     <footer>The Anderson's Condo Calendar &copy; Ryan Carl, 2016</footer>
 	
     <div id="signin-modal">
-      <div style="text-align:right;padding-right:30px"><a id="close-modal-btn" class="close-signin-modal">&times;</a></div>
+     <div style="text-align:right;padding-right:30px"><a id="close-modal-btn" class="close-signin-modal">&times;</a></div>
       <div class="modal-content">
         <div class="panel">
           <!--
