@@ -82,6 +82,13 @@ a.button {
   cursor: pointer;
 }
 
+div#signin {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+/*
 a.button#signin {
   width: 100px;
   position: fixed;
@@ -98,10 +105,10 @@ a.button#signin {
   -o-transition: background 0.3s ease;
 }
 
-a.button#sign-in:hover, a.button#sign-in:focus {
+a.button#signin:hover, a.button#signin:focus {
   background: rgba(255, 117, 26, 0.7);
 }
-
+*/
 button#menu-toggle {
   display: none;
   position: fixed;
@@ -221,7 +228,7 @@ a#close-modal-btn {
 }
 
 button {
-  font-size: 22px;
+  font-size: 18px;
   padding: 10px 20px;
   cursor: pointer;
 }
@@ -322,6 +329,10 @@ textarea#add-info {
 #authorize-button {
   display: block;
   margin: 30px auto;
+}
+
+#save-msg-board {
+  display: none;
 }
 
 /* large only */

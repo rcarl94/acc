@@ -1,4 +1,11 @@
 $(document).ready(function() {
+  // adjust for safari
+  var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0 || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || safari.pushNotification);
+  if (isSafari) {
+    $("#nav a.button i").css("display","none");
+    $("#nav a.button span").css("margin-top","8px");
+  }
+
   /*
   var ca = document.cookie.split(";");
   for (var i=0; i < ca.length; i++) {
@@ -36,7 +43,8 @@ $(document).ready(function() {
       $("#nav").css("width","auto");
     }
   });
-/*
+  
+  /* 
   $("#submit-signin").click(function() {
     if ($("#pwd").val() == PWD) {
       $("#reserve-nav-btn").css("display","none");
@@ -49,7 +57,6 @@ $(document).ready(function() {
       document.cookie = login_cookie + "=1;expires=" + d.toUTCString(); + ";";
     }
   });
-*/
   
   $("#signin").animatedModal({
     modalTarget: "signin-modal",
@@ -60,6 +67,7 @@ $(document).ready(function() {
     afterClose: function() {
     }
   });
+  */
 
   $("#result-btn").animatedModal({
     modalTarget: "result-modal",
@@ -69,4 +77,26 @@ $(document).ready(function() {
   $("#request-submit").click(function() {
     checkAuth();
   });
+
 });
+
+function checkUser() {
+  if (gapi.auth2.isSignedIn.get() == true) {
+    if (profile.getEmail() == "rdanderson1965@gmail.com") {
+      unlock();
+    }
+  }
+}
+
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  if (profile.getEmail() == "rdanderson1965@gmail.com") {
+    unlock();
+  }
+}
+
+function unlock() {
+  $("#reserve-nav-btn").css("display","none");
+  $("#approve-nav-btn").css("display",$(".navBtnContainer").css("display"));
+  $("#approve-nav-btn").removeClass("locked");
+}
