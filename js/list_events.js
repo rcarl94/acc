@@ -21,16 +21,12 @@ function checkAuth() {
  * @param {Object} authResult Authorization result.
  */
 function handleAuthResult(authResult) {
-  var authorizeDiv = document.getElementById('authorize-div');
   if (authResult && !authResult.error) {
-    // Hide auth UI, then load client library.
-    authorizeDiv.style.display = 'none';
+    // load client library.
     loadCalendarApi();
   } else {
-    // Show auth UI, allowing the user to initiate authorization by
-    // clicking authorize button.
-    authorizeDiv.style.display = 'inline';
-    $("#signin").click();
+    // redirect to home page
+    window.location.replace("index.html");
   }
 }
 
@@ -56,7 +52,7 @@ function loadCalendarApi() {
 
 function listEvents() {
   var request = gapi.client.calendar.events.list({
-    'calendarId': '',
+    'calendarId': 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com',
     'timeMin': (new Date()).toISOString(),
     'showDeleted': false,
     'singleEvents': true,
@@ -64,9 +60,9 @@ function listEvents() {
   });     
 
   request.execute(function(resp) {
-    $(".close-signin-modal").click();
+    //$(".close-signin-modal").click();
     var events = resp.items;
-
+    $("#main").prepend("<h2>" + events.length + " pending requests</h2>");
     if (events.length > 0) {
       for (i = 0; i < events.length; i++) {
         var event = events[i];
@@ -74,10 +70,10 @@ function listEvents() {
         if (!when) {
           when = event.start.date;
         }       
-        $("#requests").append("<div class='request'><div class='request-info'><span>Name</span>" + event.summary + "<br><span>Dates</span>" + event.start.date + " to " + event.end.date + "<br><span>Additional Info</span>" + event.description + "</div><button class='approve'><i class='fa fa-check'></i></button><button class='deny'><i class='fa fa-ban'></i></button><div style='clear:both'></div></div>");
+        $("#requests").append("<div class='request'><div class='request-info'><span>Name</span>" + event.summary + "<br><span>Dates</span>" + event.start.date + " to " + event.end.date + "<br><span>Additional Info</span>" + event.description + "</div><button class='approve'><i class='fa fa-check'></i><span>Approve</span></button><button class='deny'><i class='fa fa-ban'></i><span>Deny</span></button><div style='clear:both'></div></div>");
       }       
     } else {
-      document.getElementById("requests").append('No upcoming events found.');
+      $("#requests").append('<h2>No pending requests</h2>');
     }       
   });
 }

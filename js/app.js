@@ -81,16 +81,19 @@ $(document).ready(function() {
 });
 
 function checkUser() {
-  if (gapi.auth2.isSignedIn.get() == true) {
-    if (profile.getEmail() == "rdanderson1965@gmail.com") {
-      unlock();
+  if (gapi.auth2) {
+    if (gapi.auth2.isSignedIn.get() == true) {
+    var profile = auth2.currentUser.get().getBasicProfile();
+      if (profile.getEmail() == "rcarl94@gmail.com") {
+        unlock();
+      }
     }
   }
 }
 
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
-  if (profile.getEmail() == "rdanderson1965@gmail.com") {
+  if (profile.getEmail() == "rcarl94@gmail.com") {
     unlock();
   }
 }

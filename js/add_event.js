@@ -55,8 +55,14 @@ function loadCalendarApi() {
 
 function addEvent() {
   var event = {
-    'summary': $('#name').val(),
+    'summary': 'Request from ' + $('#name').val(),
     'description': $('#add-info').val(),
+    'attendees': [
+      {
+        'displayName': $('#name').val(),
+        'email': $('#email').val()
+      }
+    ],
     'start': {
       'date': $('#start-date').val(),
     },
@@ -65,7 +71,7 @@ function addEvent() {
     }
   };
   var request = gapi.client.calendar.events.insert({
-    'calendarId': 'rdanderson1965@gmail.com',
+    'calendarId': 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com',
     'resource': event
   });
 

@@ -239,11 +239,11 @@ button {
 
 #request-form input {
   font-family: sans-serif;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 #request-form label {
-  font-size: 20px;
+  font-size: 16px;
   margin-bottom: 20px;
 }
 
@@ -253,7 +253,7 @@ button {
 }
 
 #request-form div {
-  width: 30%;
+  width: 24%;
   display: inline-block;
 }
 
@@ -311,15 +311,29 @@ textarea#add-info {
 .request button {
   float: right;
   clear: right;
-  padding: 5px 10px;
-  width: 66px;
+  padding: 12px 10px;
   border: none;
+  margin-right: 30px;
   background: transparent;
+}
+
+.request button:hover, .request button:focus {
+  margin-right: 0px;
+}
+
+.request button > span {
+  display: none;
+  font-size: 14px;
+  margin-left: 10px;
+  margin-right: 0;
+}
+
+.request button:hover > span, .request button:focus > span {
+  display: inline-block;
 }
 
 .request button.approve {
   color: #36c471; 
-  margin-bottom: 10px;
 }
 
 .request button.deny {
