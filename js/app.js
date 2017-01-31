@@ -1,3 +1,5 @@
+var ADMIN_EMAIL = "destincondocalendar@outlook.com";
+
 $(document).ready(function() {
   // adjust for safari
   var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0 || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || safari.pushNotification);
@@ -74,27 +76,38 @@ $(document).ready(function() {
     color: "rgba(255,255,255,0.8)",
   });
 
-  $("#request-submit").click(function() {
-    checkAuth();
-  });
-
+  // Safari date picker
+  if ( $('[type="date"]').prop('type') != 'date' ) {
+    $('[type="date"]').datepicker({
+      dateFormat: "yy-mm-dd",
+      changeYear: true
+    });
+  }
 });
 
-function checkUser() {
-  if (gapi.auth2) {
-    if (gapi.auth2.isSignedIn.get() == true) {
-    var profile = auth2.currentUser.get().getBasicProfile();
-      if (profile.getEmail() == "rcarl94@gmail.com") {
-        unlock();
-      }
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  if (profile.getEmail() == ADMIN_EMAIL) {
+    unlock();
+    if (window.location.pathname.split("/").pop() == "approval.php" && profile.getEmail() != ADMIN_EMAIL) {
+      // redirect to home page
+      $("#requests").html("<h2>You must be signed in as the site manager to view this page. Navigating to home.</h2>");
+      setTimeout(function() {
+        window.location.replace("index.html");
+      }, 1000);
     }
   }
 }
 
-function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  if (profile.getEmail() == "rcarl94@gmail.com") {
-    unlock();
+function checkUser() {
+  if (gapi.auth2) {
+    console.log(gapi.auth2.currentUser);
+    if (gapi.auth2.isSignedIn.get() == true) {
+      var profile = auth2.currentUser.get().getBasicProfile();
+      if (profile.getEmail() == ADMIN_EMAIL) {
+        unlock();
+      }
+    }
   }
 }
 

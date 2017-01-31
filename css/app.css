@@ -18,8 +18,7 @@ p {
   background-size: 107%;
   background-repeat: no-repeat;
   background-position-y: 57%;
-  text-shadow: 0 2px 2px #292929;
-  -webkit-text-stroke: 1px #333;
+  text-shadow: -2px 2px 2px #292929;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -44,7 +43,7 @@ p {
 }
 
 .overlay > h1 {
-  font-size: 4em;
+  font-size: 5em;
   cursor: pointer;
 }
 
@@ -220,11 +219,8 @@ a#close-modal-btn {
 }
 
 .panel input {
-  display: block;
-  font-size: 20px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 20px;
+  font-size: 16px;
+  border: none;
 }
 
 button {
@@ -235,6 +231,7 @@ button {
 
 #request-form {
   padding: 25px;
+  margin-top: 30px;
 }
 
 #request-form input {
@@ -261,6 +258,20 @@ button {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  padding: 10px 20px;
+  background: linear-gradient(to bottom,#0066ff,#0047b3);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+}
+
+#request-submit:hover, #request-submit:focus {
+  box-shadow: 0 4px 2px 0 #aaa;
+  margin-top: -2px;
 }
 
 #photos {
@@ -293,25 +304,41 @@ textarea#add-info {
   height: 350px;
 }
 
+.request {
+  font-weight: 900;
+}
+
 .request span {
-  font-size: 24px;
-  margin-right: 15px;
+  font-weight: 400;
 }
 
 .request {
   text-align: left;
   border: 1px solid #c8c8c8;
   padding: 10px;
+  margin-bottom: 20px;
 }
 
 .request .request-info {
   float: left;
+  max-width: 80%;
+}
+
+.req-add-info {
+  clear: both;
+  margin-top: 10px;
+}
+
+.request .button-container {
+  margin-top: 1%;
+  float: right;
 }
 
 .request button {
   float: right;
   clear: right;
   padding: 12px 10px;
+  display: block;
   border: none;
   margin-right: 30px;
   background: transparent;
@@ -347,6 +374,55 @@ textarea#add-info {
 
 #save-msg-board {
   display: none;
+}
+
+h2#request-result {
+  padding: 10px;
+}
+
+h2#request-result p {
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#ad-form {
+  margin-top: 50px;
+}
+
+#approve-modal button, #deny-modal button {
+  margin-top: 30px;
+  width: 100px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+}
+
+#approve-modal span, #deny-modal span {
+  font-weight: 900;
+}
+
+#approve-modal button#submit-approve:hover, #approve-modal button#submit-approve:focus {
+  background: #9be4b9;
+}
+
+#deny-modal button#submit-deny:hover, #deny-modal button#submit-deny:focus {
+  background: #f2c1c0; 
+}
+
+#approve-modal button#cancel-approve:hover, #deny-modal button#cancel-deny:hover {
+  background: #ccc;
+}
+
+#alert-bar {
+  border-radius: 5px;
+  text-align: left;
+  padding: 12px 10px;
+  margin-bottom: 15px;
 }
 
 /* large only */
@@ -391,6 +467,11 @@ textarea#add-info {
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
     -o-transition: all 0.3s ease;
+    overflow: auto;
+  }
+
+  #nav > div:last-child {
+    margin-bottom: 20px;
   }
   
   .navBtnContainer {
@@ -469,5 +550,34 @@ textarea#add-info {
 
   footer {
     text-align: center;
+  }
+
+  h2#request-result p {
+    width: 80%;
+  }
+
+  .request .button-container {
+    float: none;
+    clear: both;
+    width: 100%;
+    margin-top: 15px;
+    display: inline-block;
+  }
+
+  .request button {
+    margin-right: 0;
+    width: 50%;
+  }
+
+  .request button.approve {
+    float: left;
+  }
+
+  .request button.deny {
+    overflow: hidden;
+  }
+
+  .request button:hover > span, .request button:focus > span {
+    display: none;
   }
 }
