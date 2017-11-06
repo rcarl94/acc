@@ -1,8 +1,6 @@
 <?php
 
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
+$thecal = 'requests'; // requests, test
 
 /* code below was adapted from http://cornempire.net/2012/01/15/part-3-oauth2-and-configuring-your-application-with-google/ */
 session_start();
@@ -106,7 +104,6 @@ function isTimeBooked($startdate,$enddate,$cal){
 }
 */
 
-$thecal = 'test';
 $message = "";
 $calendars = array(
     'requests' => array(
@@ -175,7 +172,6 @@ if (isset($_POST['submit'])) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://use.fontawesome.com/23995a4842.js"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
-    <!--<script src="https://apis.google.com/js/client.js"></script>-->
   </head>
   <body>
     <div id="topbar">
