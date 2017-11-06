@@ -1,4 +1,4 @@
-var ADMIN_EMAIL = "destincondocalendar@outlook.com";
+var ADMIN_EMAIL = "rdanderson1965@gmail.com"
 
 $(document).ready(function() {
   // adjust for safari
@@ -7,25 +7,6 @@ $(document).ready(function() {
     $("#nav a.button i").css("display","none");
     $("#nav a.button span").css("margin-top","8px");
   }
-
-  /*
-  var ca = document.cookie.split(";");
-  for (var i=0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(login_cookie) == 0) {
-      if (c.substring(login_cookie.length+1,c.length) == 1) {
-        $("#reserve-nav-btn").css("display","none");
-        $("#approve-nav-btn").css("display",$(".navBtnContainer").css("display"));
-        $("#approve-nav-btn").removeClass("locked");
-        $("#signin").hide();
-        $(".close-signin-modal").click();
-      }
-    }
-  }
-  */
 
   $("#menu-toggle").click(function() {
     if ($("#menu-toggle i:first-child").css("display") != "none") {
@@ -46,31 +27,6 @@ $(document).ready(function() {
     }
   });
   
-  /* 
-  $("#submit-signin").click(function() {
-    if ($("#pwd").val() == PWD) {
-      $("#reserve-nav-btn").css("display","none");
-      $("#approve-nav-btn").css("display",$(".navBtnContainer").css("display"));
-      $("#approve-nav-btn").removeClass("locked");
-      $("#signin").hide();
-      $(".close-signin-modal").click();
-      var d = new Date();
-      d.setTime(d.getTime + (60*60*1000));
-      document.cookie = login_cookie + "=1;expires=" + d.toUTCString(); + ";";
-    }
-  });
-  
-  $("#signin").animatedModal({
-    modalTarget: "signin-modal",
-    color: "rgba(255,255,255,0.8)",
-    afterOpen: function() {
-      $("#pwd").focus();
-    },
-    afterClose: function() {
-    }
-  });
-  */
-
   $("#result-btn").animatedModal({
     modalTarget: "result-modal",
     color: "rgba(255,255,255,0.8)",

@@ -1,12 +1,9 @@
 <?php
-/*
-require_once('twilio-php/Twilio/autoload.php');
-use Twilio/Rest/Client;
-$sid = 'AC23bbd59a5e53edb8034b9eeeb64247c4';
-$token = '9f22e8571ac6b43491e89a24da7780fe';
-$client = new Client($sid, $token);
-$client->messages->create('+19013957603',array('from' => '+19015319254','body' => 'Hello sir'));
-*/
+
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 /* code below was adapted from http://cornempire.net/2012/01/15/part-3-oauth2-and-configuring-your-application-with-google/ */
 session_start();
 function getAccessToken(){
@@ -25,7 +22,6 @@ function getAccessToken(){
  
     $tokenReturn = curl_exec($ch);
     $token = json_decode($tokenReturn);
-    //var_dump($tokenReturn);
     $accessToken = $token->access_token;
     return $accessToken;
 }
@@ -110,78 +106,60 @@ function isTimeBooked($startdate,$enddate,$cal){
 }
 */
 
-function validateDate($date) {
-    $d = DateTime::createFromFormat('Y-m-d', $date);
-    return $d && $d->format('Y-m-d') === $date;
-}
-
-$thecal = 'requests';
-if(isset($_GET['cal'])){
-    $thecal = addslashes($_GET['cal']);
-}
+$thecal = 'test';
 $message = "";
 $calendars = array(
-    'requests' => array('cid' => 'requests', 'name' => 'RanDestin Requests', 'id' => 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com', 'advance' => '0')
+    'requests' => array(
+        'cid'     => 'requests',
+        'name'    => 'RanDestin Requests',
+        'id'      => 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com',
+        'advance' => '0'
+    ),
+    'test' => array(
+        'cid'     => 'test',
+        'name'    => 'Test',
+        'id'      => '0c4uu14q53o4n9te9k66vufmn4@group.calendar.google.com',
+        'advance' => '0'
+    )
 );
 $APIKEY = 'AIzaSyCOIxu7rd-NJKRHlVC-4sZjc08IGnmGL9Y';
  
-if(isset($_POST['submit'])){
+if (isset($_POST['submit'])) {
     $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
     if ($_SESSION['LastRequest'] == $RequestSignature) {
-      header('Location: '.$_SERVER['PHP_SELF']);
+      header('Location: ' . $_SERVER['PHP_SELF']);
       die;
     } else {
-        /* concatenate phone number */
-        //$_POST['phone'] = $_POST['phone1'] . $_POST['phone2'] . $_POST['phone3'];
         /*
          * Check to see if everything was filled out properly.
          */
-        if(date('Ymd') > date('Ymd',strtotime($_POST['start-date']))){
+        if (date('Ymd') > date('Ymd',strtotime($_POST['start-date']))) {
             $message = 'You cannot make a booking in the past.  Please check your date.';
         }
         /*
          * Check to see if we are alowed to book this far in advance.
-         */
-        elseif(date('Ymd',strtotime($_POST['start-date'])) > date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['start-date'])))){
+        elseif (date('Ymd',strtotime($_POST['start-date'])) > date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['start-date'])))){
             $message = 'You cannot book that far into the future.  You can only book ' . $calendars[$thecal]['advance'] . ' in the future.  Please try again.';
         }
-		/* Check date format */
-		elseif(validateDate($_POST['start-date']) && validateDate($_POST['end-date'])) {
-			$message = 'The dates you entered are invalid. Format: YYYY-MM-DD';
-		}
+        */
         /*
          * Check and see if a booking already exists.
          */
         /*
-        elseif(isTimeBooked($_POST['start-date'],$_POST['end-date'],$calendars[$thecal]['id'])){
+        elseif (isTimeBooked($_POST['start-date'],$_POST['end-date'],$calendars[$thecal]['id'])) {
             $message = 'Some of the dates you requested are not available. See the current reservations <a href="calendar_view.html">here</a>.';
         }
         */
         /*
          * Everything is good, submit the event.
          */
-        else{
+        else {
             $_SESSION['LastRequest'] = $RequestSignature;
             $postargs = createPostArgsJSON($_POST['name'],$_POST['email'],$_POST['start-date'],$_POST['end-date'],$_POST['add-info']);
-            /*
-            // send confirmation text 
-            $subject = "";
-            $headers = "From: RanDestin Reservations <destincondocalendar@outlook.com>\r\n";
-            $headers .= "Reply-To: RanDestin Reservations <destincondocalendar@outlook.com>\r\n";
-            $headers .= "X-Mailer: PHP v" . phpversion() . "\r\n";
-            $mime_boundary=md5(time());
-            $headers .= "MIME-Version: 1.0\r\n";
-            $headers .= "Content-Type: text/plain; boundary=\"".$mime_boundary."\"\r\n";
-            $message = "Your request was successful. The dates you request are " . $_POST['start-date'] . " to " . $_POST['end-date'] . ". You should receive a response in the next few days.";
-            $didSend = mail($_POST['phone'] . "@" . $_POST['carrier'],$subject,$message,$headers);
-            if (!$didSend) {
-              $result = "There was a problem sending confirmation to the number you entered. Please <a href='make_reservation.php'>re-submit</a> your request.";
-            }
-            */
             $token = getAccessToken();
             $result = sendPostRequest($postargs,$token,$calendars[$thecal]['id']);
         }
-    
+    }
 }
 ?>
 
@@ -201,11 +179,6 @@ if(isset($_POST['submit'])){
   </head>
   <body>
     <div id="topbar">
-      <!--
-      <video width="100%" autoplay loop muted>
-        <source src="view.mp4" type="video/mp4"></source>
-      </video>
-      -->
       <div class="overlay">
         <h1><a href="index.html">RanDestin</a></h1>
       </div>
@@ -258,7 +231,7 @@ if(isset($_POST['submit'])){
 ?>
       </h2>
 <?php
-  } else {
+    } else {
 ?>
       <script type="text/javascript">
         $("#request-result").hide();
@@ -271,29 +244,6 @@ if(isset($_POST['submit'])){
             <input id="name" name="name" type="text" required="required" placeholder="First Last"></input>
           </label>
         </div>
-        <!--
-        <div>
-          <label for="phone">Phone Number
-            <input id="phone" name="phone" type="number" style="display:none" maxlength="10"></input>
-            <input id="phone1" name="phone1" type="text" placeholder="(XXX)" maxlength="3" required="required"></input>
-            <input id="phone2" name="phone2" type="text" placeholder="XXX" maxlength="3" required="required"></input>
-            <input id="phone3" name="phone3" type="text" placeholder="XXXX" maxlength="4" required="required"></input>
-          </label>
-        </div>
-        <div>
-          <label for="carrier">Mobile Carrier
-            <select id="carrier" name="carrier" required="required">
-              <option disabled selected value></option>
-              <option value="txt.att.net">AT&amp;T</option>
-              <option value="myboostmobile.com">Boost Mobile</option>
-              <option value="messaging.sprintpcs.com">Sprint</option>
-              <option value="tmomail.net">T-Mobile</option>
-              <option value="email.uscc.net">US Cellular</option>
-              <option value="vtext.com">Verizon</option>
-            </select>
-          </label>
-        </div>
-        -->
         <div>
           <label for="email">Email
             <input id="email" name="email" type="email" required="required" placeholder="email@example.com"></input>
@@ -316,8 +266,9 @@ if(isset($_POST['submit'])){
         <input type="submit" id="request-submit" name="submit" value="Submit Request"></input>
       </form>
     </div>
-<?php } ?>
-    <footer>The Anderson's Condo Calendar &copy; Ryan Carl, 2016</footer>
+<?php
+    }
+?>
     <script src="js/animatedModal.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="js/app.js"></script>

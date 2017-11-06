@@ -339,7 +339,6 @@ $requests = $response['items'];
         </div> 
       </form>
     </div>
-    <footer>The Anderson's Condo Calendar &copy; Ryan Carl, 2016</footer>
     <script src="js/animatedModal.min.js"></script>
     <script src="js/app.js"></script>
     <script type="text/javascript">

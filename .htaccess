@@ -1,4 +1,4 @@
 AuthType Basic  
-AuthName "restricted area"  
-AuthUserFile /var/www/html/acc/.htpasswd  
+AuthName "Private"
+AuthUserFile "C:\Bitnami\wampstack-5.6.32-0\apache2\htdocs\randestin\.htpasswd"
 require valid-user
