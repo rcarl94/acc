@@ -1,216 +1,205 @@
 <?php
-/* code below was adapted from http://cornempire.net/2012/01/15/part-3-oauth2-and-configuring-your-application-with-google/ */
-session_start();
-   
-function getAccessToken(){
-    $tokenURL = 'https://accounts.google.com/o/oauth2/token';
-    $postData = array(
-        'client_secret'=>'Yac8T9RFAAVcSYXD00vN0mbt',
-        'grant_type'=>'refresh_token',
-        'refresh_token'=>'1/PHPqVqbNe1AmQkjE5K-Ogn9eJkXKgxoJZP1IfW2Euxo',
-        'client_id'=>'381768128087-fvkcbktqfcrmndtj9tbks7kt6lhh4cq4.apps.googleusercontent.com'
+    $APIKEY = 'AIzaSyCOIxu7rd-NJKRHlVC-4sZjc08IGnmGL9Y';
+    $req_cal = 'requests-test';
+    $public_cal = 'public-test';
+    $calendars = array(
+        'requests' => array('cid' => 'requests', 'name' => 'RanDestin Requests', 'id' => 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com', 'advance' => '0'),
+        'requests-test' => array('cid' => 'requests-test', 'name' => 'RanDestin Requests Test', 'id' => '0c4uu14q53o4n9te9k66vufmn4@group.calendar.google.com', 'advance' => '0'),
+        'public' => array('cid' => 'public', 'name' => 'RanDestin', 'id' => '2rtmtvb76ad0fkn5sib3cls00s@group.calendar.google.com', 'advance' => '0')
+        'public-test' => array('cid' => 'public-test', 'name' => 'RanDestin Test', 'id' => 'r9nuhp3j159sbnlpf7tch9hq7g@group.calendar.google.com', 'advance' => '0')
     );
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $tokenURL);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
- 
-    $tokenReturn = curl_exec($ch);
-    $token = json_decode($tokenReturn);
-    //var_dump($tokenReturn);
-    $accessToken = $token->access_token;
-    return $accessToken;
-}
-
-function createPostArgsJSON($name,$email,$startdate,$enddate,$addinfo){
-    $arg_list = func_get_args();
-    foreach($arg_list as $key => $arg){
-        $arg_list[$key] = urlencode($arg);
+    /* code below was adapted from http://cornempire.net/2012/01/15/part-3-oauth2-and-configuring-your-application-with-google/ */
+    session_start();
+       
+    function getAccessToken(){
+        $tokenURL = 'https://accounts.google.com/o/oauth2/token';
+        $postData = array(
+            'client_secret'=>'Yac8T9RFAAVcSYXD00vN0mbt',
+            'grant_type'=>'refresh_token',
+            'refresh_token'=>'1/PHPqVqbNe1AmQkjE5K-Ogn9eJkXKgxoJZP1IfW2Euxo',
+            'client_id'=>'381768128087-fvkcbktqfcrmndtj9tbks7kt6lhh4cq4.apps.googleusercontent.com'
+        );
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $tokenURL);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+     
+        $tokenReturn = curl_exec($ch);
+        $token = json_decode($tokenReturn);
+        //var_dump($tokenReturn);
+        $accessToken = $token->access_token;
+        return $accessToken;
     }
-    $postargs = <<<JSON
-{
- "start": {
-  "date": "{$startdate}"
- },
- "end": {
-  "date": "{$enddate}"
- },
- "summary": "{$name}",
- "description": "{$addinfo}",
- "attendees": [
-  {
-   "email": "{$email}",
-   "optional": "true"
-  }
- ]
-}
-JSON;
-    return $postargs;
-}
- 
-function sendGetRequest($token,$request){
-    global $APIKEY;
-     
-    $session = curl_init($request);
-    curl_setopt ($session, CURLOPT_HTTPGET, true);
-    curl_setopt($session, CURLOPT_HEADER, false); 
-    curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($session, CURLINFO_HEADER_OUT, false);
-    curl_setopt($session, CURLOPT_HTTPHEADER, array('Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
-     
-    $response = curl_exec($session);
-     
-    curl_close($session); 
-    return $response;
-}
 
-function sendPostRequest($postargs, $token, $cal){
-    global $APIKEY;
-    $request = 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?sendNotifications=true&pp=1&key=' . $APIKEY;
-     
-    $session = curl_init($request);
-     
-    // Tell curl to use HTTP POST
-    curl_setopt ($session, CURLOPT_POST, true); 
-    // Tell curl that this is the body of the POST
-    curl_setopt ($session, CURLOPT_POSTFIELDS, $postargs); 
-    // Tell curl not to return headers, but do return the response
-    curl_setopt($session, CURLOPT_HEADER, false); 
-    curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-    //curl_setopt($session, CURLOPT_VERBOSE, true);
-    curl_setopt($session, CURLINFO_HEADER_OUT, true);
-    curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type:  application/json','Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
-     
-    $response = curl_exec($session);
-     
-    curl_close($session); 
-    return $response;
-}
-
-function sendDeleteRequest($eventid, $token, $cal){
-    global $APIKEY;
-    $request = 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events/' . $eventid;
-    $postargs = ''; 
-    $session = curl_init($request);
-     
-    curl_setopt($session, CURLOPT_CUSTOMREQUEST, "DELETE");
-    // Tell curl that this is the body of the POST
-    curl_setopt ($session, CURLOPT_POSTFIELDS, $postargs); 
-    // Tell curl not to return headers, but do return the response
-    curl_setopt($session, CURLOPT_HEADER, false); 
-    curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-    //curl_setopt($session, CURLOPT_VERBOSE, true);
-    curl_setopt($session, CURLINFO_HEADER_OUT, true);
-    curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type:  application/json','Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
-     
-    $response = curl_exec($session);
-     
-    curl_close($session); 
-    return $response;
-}
-/* under construction
-function isTimeBooked($startdate,$enddate,$cal){
-    global $APIKEY;
-    $token = getAccessToken();
-    $result = sendGetRequest($token, 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?timeMax=' . $enddate . '&timeMin=' . $startdate . '&fields=items(end%2Cstart%2Csummary)&pp=1&key=' . $APIKEY);
-    echo $result;
-    if(strlen($result) > 5){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-*/
-
-$thecal = 'requests';
-$message = "";
-$calendars = array(
-    'requests' => array('cid' => 'requests', 'name' => 'RanDestin Requests', 'id' => 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com', 'advance' => '0'),
-    'public' => array('cid' => 'public', 'name' => 'RanDestin', 'id' => '2rtmtvb76ad0fkn5sib3cls00s@group.calendar.google.com', 'advance' => '0')
-);
-$APIKEY = 'AIzaSyCOIxu7rd-NJKRHlVC-4sZjc08IGnmGL9Y';
-$token = getAccessToken();
-
-if(isset($_POST['submit-approve'])){
-    $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
-    if ($_SESSION['LastRequest'] == $RequestSignature) {
-      header('Location: '.$_SERVER['PHP_SELF']);
-      die;
-    } else {
-        /*
-         * Check to see if everything was filled out properly.
-         */
-        if(date('Ymd') > date('Ymd',strtotime($_POST['a-start-date']))){
-            $message = 'You cannot make a booking in the past.  Please check your date.';
+    function createPostArgsJSON($name,$email,$startdate,$enddate,$addinfo){
+        $arg_list = func_get_args();
+        foreach($arg_list as $key => $arg){
+            $arg_list[$key] = urlencode($arg);
         }
+        $postargs = new stdClass();
+        $postargs->start = new stdClass();
+        $postargs->start->date = $startdate;
+        $postargs->end = new stdClass();
+        $postargs->end = $enddate;
+        $postargs->summary = $name;
+        $postargs->description = $addinfo;
+        $postargs->attendees = array(json_decode('{"email":"' . $email . '","optional":"true"}'));
         /*
-         * Check to see if we are alowed to book this far in advance.
-         */
-        elseif(date('Ymd',strtotime($_POST['a-start-date'])) > date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['a-start-date'])))){
-            $message = 'You cannot book that far into the future.  You can only book ' . $calendars[$thecal]['advance'] . ' in the future.  Please try again.';
-            //$message .= date('Ymd',strtotime($_POST['a-start-date'])) . ' > ' . date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['a-start-date'])));
-        }
-        /*
-         * Check and see if a booking already exists.
-         */
-        /*
-        elseif(isTimeBooked($_POST['a-start-date'],$_POST['end-date'],$calendars[$thecal]['id'])){
-            $message = 'Some of the dates you requested are not available. See the current reservations <a href="calendar_view.html">here</a>.';
+         "start": {
+          "date": "{$startdate}"
+         },
+         "end": {
+          "date": "{$enddate}"
+         },
+         "summary": "{$name}",
+         "description": "{$addinfo}",
+         "attendees": [
+          {
+           "email": "{$email}",
+           "optional": "true"
+          }
+         ]
         }
         */
-        /*
-         * Everything is good, submit the event.
-         */
-        else{
-            $_SESSION['LastRequest'] = $RequestSignature;
-            $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$thecal]['id'] . "/events/" . $_POST['submit-approve'];
-            $response = sendGetRequest($token, $request);
-            $response = json_decode($response, true);
-            $response['start']['date'] = $_POST['a-start-date'];
-            $response['end']['date'] = $_POST['a-end-date'];
+        return json_encode($postargs);
+    }
+     
+    function sendGetRequest($token,$request){
+        global $APIKEY;
+         
+        $session = curl_init($request);
+        curl_setopt ($session, CURLOPT_HTTPGET, true);
+        curl_setopt($session, CURLOPT_HEADER, false); 
+        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($session, CURLINFO_HEADER_OUT, false);
+        curl_setopt($session, CURLOPT_HTTPHEADER, array('Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
+         
+        $response = curl_exec($session);
+         
+        curl_close($session); 
+        return $response;
+    }
 
-            $postargs = createPostArgsJSON($response['summary'],$response['attendees'][0]['email'],$response['start']['date'],$response['start']['date'],$response['description']);
-            /*
-            // send confirmation email
-            $subject = "RanDestin Request";
-            $headers = "MIME-Version: 1.0" . "\r\n" . "Content-type: text/html; charset=iso-8859-1" . "\r\n" . "From: destincondocalendar@outlook.com" . "\r\n" . "Reply-To: rdanderson1965@gmail.com" . "\r\n" . "X-Mailer: PHP/" . phpversion();
-            $message = "You have requested to stay at the Anderson's condo in Silver Beach Towers from " . $_POST['a-start-date'] . " to " . $_POST['end-date'] . ". If you have any questions, please contact Randy at rdanderson1965@gmail.com.";
-            $message = wordwrap($message, 70, "\r\n");
-            $didSend = mail($_POST['email'],$subject,$message,$headers);
-            if (!$didSend) {
-              $result = "There was a problem sending confirmation to the email you entered. Please <a href='make_reservation.php'>re-submit</a> your request.";
-            }
-            */
-            $result = sendPostRequest($postargs,$token,$calendars['public']['id']);
-            $delresult = sendDeleteRequest($_POST['submit-approve'],$token,$calendars['requests']['id']);
-            if (!empty($delresult))
-              $result = 'ERROR';
+    function sendPostRequest($postargs, $token, $cal){
+        global $APIKEY;
+        $request = 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?sendNotifications=true&pp=1&key=' . $APIKEY;
+         
+        $session = curl_init($request);
+         
+        curl_setopt($session, CURLOPT_POST, true); 
+        curl_setopt($session, CURLOPT_POSTFIELDS, $postargs); 
+        curl_setopt($session, CURLOPT_HEADER, false); 
+        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+        //curl_setopt($session, CURLOPT_VERBOSE, true);
+        curl_setopt($session, CURLINFO_HEADER_OUT, true);
+        curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type:  application/json','Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
+         
+        $response = curl_exec($session);
+         
+        curl_close($session); 
+        return $response;
+    }
+
+    function sendDeleteRequest($eventid, $token, $cal){
+        global $APIKEY;
+        $request = 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events/' . $eventid;
+        $postargs = ''; 
+        $session = curl_init($request);
+         
+        curl_setopt($session, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($session, CURLOPT_POSTFIELDS, $postargs); 
+        curl_setopt($session, CURLOPT_HEADER, false); 
+        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+        //curl_setopt($session, CURLOPT_VERBOSE, true);
+        curl_setopt($session, CURLINFO_HEADER_OUT, true);
+        curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type:  application/json','Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
+         
+        $response = curl_exec($session);
+         
+        curl_close($session); 
+        return $response;
+    }
+    /* under construction
+    function isTimeBooked($startdate,$enddate,$cal){
+        global $APIKEY;
+        $token = getAccessToken();
+        $result = sendGetRequest($token, 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?timeMax=' . $enddate . '&timeMin=' . $startdate . '&fields=items(end%2Cstart%2Csummary)&pp=1&key=' . $APIKEY);
+        echo $result;
+        if(strlen($result) > 5){
+            return true;
+        }
+        else{
+            return false;
         }
     }
-} else if (isset($_POST['submit-deny'])) {
-    $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
-    if ($_SESSION['LastRequest'] == $RequestSignature) {
-      header('Location: '.$_SERVER['PHP_SELF']);
-      die;
-    } else {
-        $_SESSION['LastRequest'] = $RequestSignature;
-        $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$thecal]['id'] . "/events/" . $_POST['submit-deny'];
-        $response = sendGetRequest($token, $request);
-        $response = json_decode($response, true);
-        $denyname = $response['summary'];
-        $denyemail = $response['attendees'][0]['email'];
-        $denyresult = sendDeleteRequest($_POST['submit-deny'],$token,$calendars['requests']['id']);
-        if (empty($denyresult))
-          $denyresult = 'SUCCESS';
-    } 
-}
-// get all requests
-$request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$thecal]['id'] . "/events";
-$response = sendGetRequest($token, $request);
-$response = json_decode($response, true);
-$requests = $response['items'];
+    */
+
+    $message = "";
+    $token = getAccessToken();
+
+    if(isset($_POST['submit-approve'])){
+        $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
+        if ($_SESSION['LastRequest'] == $RequestSignature) {
+          header('Location: '.$_SERVER['PHP_SELF']);
+          die;
+        } else {
+            // Check to see if everything was filled out properly.
+            if(date('Ymd') > date('Ymd',strtotime($_POST['a-start-date']))){
+                $message = 'You cannot make a booking in the past.  Please check your date.';
+            }
+            // Check to see if we are alowed to book this far in advance.
+            elseif(date('Ymd',strtotime($_POST['a-start-date'])) > date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['a-start-date'])))){
+                $message = 'You cannot book that far into the future.  You can only book ' . $calendars[$thecal]['advance'] . ' in the future.  Please try again.';
+                //$message .= date('Ymd',strtotime($_POST['a-start-date'])) . ' > ' . date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['a-start-date'])));
+            }
+            // Check and see if a booking already exists.
+            /*
+            elseif(isTimeBooked($_POST['a-start-date'],$_POST['end-date'],$calendars[$thecal]['id'])){
+                $message = 'Some of the dates you requested are not available. See the current reservations <a href="calendar_view.html">here</a>.';
+            }
+            */
+            // Everything is good, submit the event.
+            else {
+                $_SESSION['LastRequest'] = $RequestSignature;
+                $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$thecal]['id'] . "/events/" . $_POST['submit-approve'];
+                $response = sendGetRequest($token, $request);
+                $response = json_decode($response, true);
+                $response['start']['date'] = $_POST['a-start-date'];
+                $response['end']['date'] = $_POST['a-end-date'];
+
+                $postargs = createPostArgsJSON($response['summary'],$response['attendees'][0]['email'],$response['start']['date'],$response['start']['date'],$response['description']);
+                // add to public calendar
+                $result = sendPostRequest($postargs,$token,$calendars[$public_cal]['id']);
+                // remove from requests calendar
+                $delresult = sendDeleteRequest($_POST['submit-approve'],$token,$calendars[$req_cal]['id']);
+                if (!empty($delresult))
+                  $result = 'ERROR';
+            }
+            var_dump($message);
+        }
+    } else if (isset($_POST['submit-deny'])) {
+        $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
+        if ($_SESSION['LastRequest'] == $RequestSignature) {
+          header('Location: '.$_SERVER['PHP_SELF']);
+          die;
+        } else {
+            $_SESSION['LastRequest'] = $RequestSignature;
+            $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$req_cal]['id'] . "/events/" . $_POST['submit-deny'];
+            $response = sendGetRequest($token, $request);
+            $response = json_decode($response, true);
+            $denyname = $response['summary'];
+            $denyemail = $response['attendees'][0]['email'];
+            $denyresult = sendDeleteRequest($_POST['submit-deny'],$token,$calendars['requests']['id']);
+            if (empty($denyresult))
+              $denyresult = 'SUCCESS';
+        } 
+    }
+    // get all requests
+    $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$req_cal]['id'] . "/events";
+    $response = sendGetRequest($token, $request);
+    $response = json_decode($response, true);
+    $requests = $response['items'];
 ?>
 
 <html>
@@ -223,7 +212,7 @@ $requests = $response['items'];
     <link rel="shortcut icon" type="image/x-icon" href="images/schedule.ico" />
     <link rel="stylesheet" type="text/css" href="css/app.css" />
     <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto:400,900" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
     <script src="https://use.fontawesome.com/23995a4842.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>

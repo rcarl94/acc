@@ -1,4 +1,4 @@
 AuthType Basic  
 AuthName "Private"
-AuthUserFile "C:\Bitnami\wampstack-5.6.32-0\apache2\htdocs\randestin\.htpasswd"
+AuthUserFile "../htdocs/.htpasswd"
 require valid-user

@@ -1,0 +1,4 @@
+applications:
+- name: randestin
+  memory: 256M
+  buildpack: php_buildpack

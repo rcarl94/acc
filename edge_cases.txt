@@ -1,2 +1,0 @@
-- remove reservations with same dates, different names (consecutively)
-- remove reservations with same name, different dates (consecutively)

@@ -1,4 +1,4 @@
-var ADMIN_EMAIL = "rdanderson1965@gmail.com"
+var ADMIN_EMAIL = "rcarl94@gmail.com"
 
 $(document).ready(function() {
   // adjust for safari
@@ -57,7 +57,6 @@ function onSignIn(googleUser) {
 
 function checkUser() {
   if (gapi.auth2) {
-    console.log(gapi.auth2.currentUser);
     if (gapi.auth2.isSignedIn.get() == true) {
       var profile = auth2.currentUser.get().getBasicProfile();
       if (profile.getEmail() == ADMIN_EMAIL) {

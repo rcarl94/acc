@@ -1,6 +1,6 @@
 <?php
 
-$thecal = 'requests'; // requests, test
+$thecal = 'test'; // requests, test
 
 /* code below was adapted from http://cornempire.net/2012/01/15/part-3-oauth2-and-configuring-your-application-with-google/ */
 session_start();
@@ -169,7 +169,7 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" type="text/css" href="css/app.css" />
     <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto" rel="stylesheet">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
     <script src="https://use.fontawesome.com/23995a4842.js"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
   </head>
