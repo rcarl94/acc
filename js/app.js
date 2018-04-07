@@ -43,6 +43,7 @@ $(document).ready(function() {
 
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
+  console.log(profile.getEmail());
   if (profile.getEmail() == ADMIN_EMAIL) {
     unlock();
     if (window.location.pathname.split("/").pop() == "approval.php" && profile.getEmail() != ADMIN_EMAIL) {

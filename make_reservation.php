@@ -1,163 +1,62 @@
 <?php
+    require 'util.php';
+    session_start();
+    $API_KEY = 'AIzaSyCOIxu7rd-NJKRHlVC-4sZjc08IGnmGL9Y';
 
-$thecal = 'test'; // requests, test
-
-/* code below was adapted from http://cornempire.net/2012/01/15/part-3-oauth2-and-configuring-your-application-with-google/ */
-session_start();
-function getAccessToken(){
-    $tokenURL = 'https://accounts.google.com/o/oauth2/token';
-    $postData = array(
-        'client_secret'=>'Yac8T9RFAAVcSYXD00vN0mbt',
-        'grant_type'=>'refresh_token',
-        'refresh_token'=>'1/PHPqVqbNe1AmQkjE5K-Ogn9eJkXKgxoJZP1IfW2Euxo',
-        'client_id'=>'381768128087-fvkcbktqfcrmndtj9tbks7kt6lhh4cq4.apps.googleusercontent.com'
+    $thecal = 'test'; // requests, test
+    $message = "";
+    $calendars = array(
+        'requests' => array(
+            'cid'     => 'requests',
+            'name'    => 'RanDestin Requests',
+            'id'      => 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com',
+            'advance' => '0'
+        ),
+        'test' => array(
+            'cid'     => 'test',
+            'name'    => 'Test',
+            'id'      => '0c4uu14q53o4n9te9k66vufmn4@group.calendar.google.com',
+            'advance' => '0'
+        )
     );
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $tokenURL);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
- 
-    $tokenReturn = curl_exec($ch);
-    $token = json_decode($tokenReturn);
-    $accessToken = $token->access_token;
-    return $accessToken;
-}
-
-function createPostArgsJSON($name,$email,$startdate,$enddate,$addinfo){
-    $arg_list = func_get_args();
-    foreach($arg_list as $key => $arg){
-        $arg_list[$key] = urlencode($arg);
-    }
-    //$addinfo = "Email: " . $email . " - " . $addinfo;
-    $postargs = <<<JSON
-{
- "start": {
-  "date": "{$startdate}"
- },
- "end": {
-  "date": "{$enddate}"
- },
- "summary": "{$name}",
- "description": "{$addinfo}",
- "attendees": [
-  {
-   "email": "{$email}",
-   "optional": "true"
-  }
- ]
-}
-JSON;
-    return $postargs;
-}
- 
-function sendGetRequest($token,$request){
-    global $APIKEY;
      
-    $session = curl_init($request);
-    curl_setopt ($session, CURLOPT_HTTPGET, true);
-    curl_setopt($session, CURLOPT_HEADER, false); 
-    curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($session, CURLINFO_HEADER_OUT, false);
-    curl_setopt($session, CURLOPT_HTTPHEADER, array('Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
-     
-    $response = curl_exec($session);
-     
-    curl_close($session); 
-    return $response;
-}
-
-function sendPostRequest($postargs,$token, $cal){
-    global $APIKEY;
-    $request = 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?sendNotifications=true&pp=1&key=' . $APIKEY;
-     
-    $session = curl_init($request);
-     
-    // Tell curl to use HTTP POST
-    curl_setopt ($session, CURLOPT_POST, true); 
-    // Tell curl that this is the body of the POST
-    curl_setopt ($session, CURLOPT_POSTFIELDS, $postargs); 
-    // Tell curl not to return headers, but do return the response
-    curl_setopt($session, CURLOPT_HEADER, false); 
-    curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-    //curl_setopt($session, CURLOPT_VERBOSE, true);
-    curl_setopt($session, CURLINFO_HEADER_OUT, true);
-    curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type:  application/json','Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
-     
-    $response = curl_exec($session);
-     
-    curl_close($session); 
-    return $response;
-}
-/* under construction
-function isTimeBooked($startdate,$enddate,$cal){
-    global $APIKEY;
-    $token = getAccessToken();
-    $result = sendGetRequest($token, 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?timeMax=' . $enddate . '&timeMin=' . $startdate . '&fields=items(end%2Cstart%2Csummary)&pp=1&key=' . $APIKEY);
-    echo $result;
-    if(strlen($result) > 5){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-*/
-
-$message = "";
-$calendars = array(
-    'requests' => array(
-        'cid'     => 'requests',
-        'name'    => 'RanDestin Requests',
-        'id'      => 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com',
-        'advance' => '0'
-    ),
-    'test' => array(
-        'cid'     => 'test',
-        'name'    => 'Test',
-        'id'      => '0c4uu14q53o4n9te9k66vufmn4@group.calendar.google.com',
-        'advance' => '0'
-    )
-);
-$APIKEY = 'AIzaSyCOIxu7rd-NJKRHlVC-4sZjc08IGnmGL9Y';
- 
-if (isset($_POST['submit'])) {
-    $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
-    if ($_SESSION['LastRequest'] == $RequestSignature) {
-      header('Location: ' . $_SERVER['PHP_SELF']);
-      die;
-    } else {
-        /*
-         * Check to see if everything was filled out properly.
-         */
-        if (date('Ymd') > date('Ymd',strtotime($_POST['start-date']))) {
-            $message = 'You cannot make a booking in the past.  Please check your date.';
-        }
-        /*
-         * Check to see if we are alowed to book this far in advance.
-        elseif (date('Ymd',strtotime($_POST['start-date'])) > date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['start-date'])))){
-            $message = 'You cannot book that far into the future.  You can only book ' . $calendars[$thecal]['advance'] . ' in the future.  Please try again.';
-        }
-        */
-        /*
-         * Check and see if a booking already exists.
-         */
-        /*
-        elseif (isTimeBooked($_POST['start-date'],$_POST['end-date'],$calendars[$thecal]['id'])) {
-            $message = 'Some of the dates you requested are not available. See the current reservations <a href="calendar_view.html">here</a>.';
-        }
-        */
-        /*
-         * Everything is good, submit the event.
-         */
-        else {
-            $_SESSION['LastRequest'] = $RequestSignature;
-            $postargs = createPostArgsJSON($_POST['name'],$_POST['email'],$_POST['start-date'],$_POST['end-date'],$_POST['add-info']);
-            $token = getAccessToken();
-            $result = sendPostRequest($postargs,$token,$calendars[$thecal]['id']);
+    if (isset($_POST['submit'])) {
+        $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
+        if ($_SESSION['LastRequest'] == $RequestSignature) {
+          header('Location: ' . $_SERVER['PHP_SELF']);
+          die;
+        } else {
+            /*
+             * Check to see if everything was filled out properly.
+             */
+            if (date('Ymd') > date('Ymd',strtotime($_POST['start-date']))) {
+                $message = 'You cannot make a booking in the past.  Please check your date.';
+            }
+            /*
+             * Check to see if we are alowed to book this far in advance.
+            elseif (date('Ymd',strtotime($_POST['start-date'])) > date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['start-date'])))){
+                $message = 'You cannot book that far into the future.  You can only book ' . $calendars[$thecal]['advance'] . ' in the future.  Please try again.';
+            }
+            */
+            /*
+             * Check and see if a booking already exists.
+             */
+            /*
+            elseif (isTimeBooked($_POST['start-date'],$_POST['end-date'],$calendars[$thecal]['id'])) {
+                $message = 'Some of the dates you requested are not available. See the current reservations <a href="calendar_view.html">here</a>.';
+            }
+            */
+            /*
+             * Everything is good, submit the event.
+             */
+            else {
+                $_SESSION['LastRequest'] = $RequestSignature;
+                $postargs = createCalPost($_POST['name'],$_POST['email'],$_POST['start-date'],$_POST['end-date'],$_POST['add-info']);
+                $token = getAccessToken();
+                $result = sendPostRequest($API_KEY, $postargs, $token, $calendars[$thecal]['id']);
+            }
         }
     }
-}
 ?>
 
 <html>

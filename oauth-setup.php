@@ -4,7 +4,7 @@ $cClientID      =   '381768128087-fvkcbktqfcrmndtj9tbks7kt6lhh4cq4.apps.googleus
 $cClientSecret  =   'Yac8T9RFAAVcSYXD00vN0mbt';
 $cRedirectURI   =   'urn:ietf:wg:oauth:2.0:oob';
   
-$cAuthCode      =   '4/SucNGNALRQgmcVRUU8d8gakaWfTQ2uisGexG2nurjjY';
+$cAuthCode      =   '4/AAAFrsvPC_3XNQLM6KakvKs8JXIwNANaZgtVcCEiDW7IgRI3LmSaC60';
  
 if (empty($cAuthCode)) {
     $rsParams = array(

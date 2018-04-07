@@ -1,130 +1,24 @@
 <?php
-    $APIKEY = 'AIzaSyCOIxu7rd-NJKRHlVC-4sZjc08IGnmGL9Y';
+    require 'util.php';
+
+    $DEV_API_KEY = 'AIzaSyBIBNgeuBWrp2rP2qXtPFtpsusL62qbZjg';
+    $API_KEY = $DEV_API_KEY;
+    //$API_KEY = 'AIzaSyCOIxu7rd-NJKRHlVC-4sZjc08IGnmGL9Y';
     $req_cal = 'requests-test';
     $public_cal = 'public-test';
     $calendars = array(
         'requests' => array('cid' => 'requests', 'name' => 'RanDestin Requests', 'id' => 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com', 'advance' => '0'),
         'requests-test' => array('cid' => 'requests-test', 'name' => 'RanDestin Requests Test', 'id' => '0c4uu14q53o4n9te9k66vufmn4@group.calendar.google.com', 'advance' => '0'),
-        'public' => array('cid' => 'public', 'name' => 'RanDestin', 'id' => '2rtmtvb76ad0fkn5sib3cls00s@group.calendar.google.com', 'advance' => '0')
+        'public' => array('cid' => 'public', 'name' => 'RanDestin', 'id' => '2rtmtvb76ad0fkn5sib3cls00s@group.calendar.google.com', 'advance' => '0'),
         'public-test' => array('cid' => 'public-test', 'name' => 'RanDestin Test', 'id' => 'r9nuhp3j159sbnlpf7tch9hq7g@group.calendar.google.com', 'advance' => '0')
     );
-    /* code below was adapted from http://cornempire.net/2012/01/15/part-3-oauth2-and-configuring-your-application-with-google/ */
     session_start();
        
-    function getAccessToken(){
-        $tokenURL = 'https://accounts.google.com/o/oauth2/token';
-        $postData = array(
-            'client_secret'=>'Yac8T9RFAAVcSYXD00vN0mbt',
-            'grant_type'=>'refresh_token',
-            'refresh_token'=>'1/PHPqVqbNe1AmQkjE5K-Ogn9eJkXKgxoJZP1IfW2Euxo',
-            'client_id'=>'381768128087-fvkcbktqfcrmndtj9tbks7kt6lhh4cq4.apps.googleusercontent.com'
-        );
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $tokenURL);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-     
-        $tokenReturn = curl_exec($ch);
-        $token = json_decode($tokenReturn);
-        //var_dump($tokenReturn);
-        $accessToken = $token->access_token;
-        return $accessToken;
-    }
-
-    function createPostArgsJSON($name,$email,$startdate,$enddate,$addinfo){
-        $arg_list = func_get_args();
-        foreach($arg_list as $key => $arg){
-            $arg_list[$key] = urlencode($arg);
-        }
-        $postargs = new stdClass();
-        $postargs->start = new stdClass();
-        $postargs->start->date = $startdate;
-        $postargs->end = new stdClass();
-        $postargs->end = $enddate;
-        $postargs->summary = $name;
-        $postargs->description = $addinfo;
-        $postargs->attendees = array(json_decode('{"email":"' . $email . '","optional":"true"}'));
-        /*
-         "start": {
-          "date": "{$startdate}"
-         },
-         "end": {
-          "date": "{$enddate}"
-         },
-         "summary": "{$name}",
-         "description": "{$addinfo}",
-         "attendees": [
-          {
-           "email": "{$email}",
-           "optional": "true"
-          }
-         ]
-        }
-        */
-        return json_encode($postargs);
-    }
-     
-    function sendGetRequest($token,$request){
-        global $APIKEY;
-         
-        $session = curl_init($request);
-        curl_setopt ($session, CURLOPT_HTTPGET, true);
-        curl_setopt($session, CURLOPT_HEADER, false); 
-        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($session, CURLINFO_HEADER_OUT, false);
-        curl_setopt($session, CURLOPT_HTTPHEADER, array('Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
-         
-        $response = curl_exec($session);
-         
-        curl_close($session); 
-        return $response;
-    }
-
-    function sendPostRequest($postargs, $token, $cal){
-        global $APIKEY;
-        $request = 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?sendNotifications=true&pp=1&key=' . $APIKEY;
-         
-        $session = curl_init($request);
-         
-        curl_setopt($session, CURLOPT_POST, true); 
-        curl_setopt($session, CURLOPT_POSTFIELDS, $postargs); 
-        curl_setopt($session, CURLOPT_HEADER, false); 
-        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-        //curl_setopt($session, CURLOPT_VERBOSE, true);
-        curl_setopt($session, CURLINFO_HEADER_OUT, true);
-        curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type:  application/json','Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
-         
-        $response = curl_exec($session);
-         
-        curl_close($session); 
-        return $response;
-    }
-
-    function sendDeleteRequest($eventid, $token, $cal){
-        global $APIKEY;
-        $request = 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events/' . $eventid;
-        $postargs = ''; 
-        $session = curl_init($request);
-         
-        curl_setopt($session, CURLOPT_CUSTOMREQUEST, "DELETE");
-        curl_setopt($session, CURLOPT_POSTFIELDS, $postargs); 
-        curl_setopt($session, CURLOPT_HEADER, false); 
-        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-        //curl_setopt($session, CURLOPT_VERBOSE, true);
-        curl_setopt($session, CURLINFO_HEADER_OUT, true);
-        curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type:  application/json','Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
-         
-        $response = curl_exec($session);
-         
-        curl_close($session); 
-        return $response;
-    }
     /* under construction
     function isTimeBooked($startdate,$enddate,$cal){
-        global $APIKEY;
+        global $API_KEY;
         $token = getAccessToken();
-        $result = sendGetRequest($token, 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?timeMax=' . $enddate . '&timeMin=' . $startdate . '&fields=items(end%2Cstart%2Csummary)&pp=1&key=' . $APIKEY);
+        $result = sendGetRequest($token, 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?timeMax=' . $enddate . '&timeMin=' . $startdate . '&fields=items(end%2Cstart%2Csummary)&pp=1&key=' . $API_KEY);
         echo $result;
         if(strlen($result) > 5){
             return true;
@@ -168,9 +62,9 @@
                 $response['start']['date'] = $_POST['a-start-date'];
                 $response['end']['date'] = $_POST['a-end-date'];
 
-                $postargs = createPostArgsJSON($response['summary'],$response['attendees'][0]['email'],$response['start']['date'],$response['start']['date'],$response['description']);
+                $postargs = createCalPost($response['summary'],$response['attendees'][0]['email'],$response['start']['date'],$response['start']['date'],$response['description']);
                 // add to public calendar
-                $result = sendPostRequest($postargs,$token,$calendars[$public_cal]['id']);
+                $result = sendPostRequest($API_KEY, $postargs, $token, $calendars[$public_cal]['id']);
                 // remove from requests calendar
                 $delresult = sendDeleteRequest($_POST['submit-approve'],$token,$calendars[$req_cal]['id']);
                 if (!empty($delresult))
@@ -268,19 +162,22 @@
 <?php
     echo '<h1>' . count($requests) . ' pending request(s)</h1>';
     if (!empty($requests)) {
-      foreach ($requests as $r) {
-        echo "<div class='request' id='" . $r['id'] . "'>
+      foreach ($requests as $request) {
+        //var_dump($request);
+        echo "<div class='request' id='" . $request['id'] . "'>
                 <div class='request-info'>
                   <div style='float:left;width:70px;'>Name<br>Email<br>Dates</div>
                   <div style='float:left'>
-                    <span class='req-name'>" . $r['summary'] . "</span><br>
-                    <span class='req-email'>" . $r['attendees'][0]['email'] . "</span><br>
-                    <span><font class='req-start-date'>" . $r['start']['date'] . "</font> to <font class='req-end-date'>" . $r['end']['date'] . "</font></span><br><br>
+                    <span class='req-name'>" . $request['summary'] . "</span><br>
+                    <span class='req-email'>" . $request['attendees'][0]['email'] . "</span><br>
+                    <span><font class='req-start-date'>" . $request['start']['date'] . "</font> to <font class='req-end-date'>" . $request['end']['date'] . "</font></span><br><br>
                   </div>
-                  <div class='req-add-info'>
+                  <!-- not available in request any longer...
+                   div class='req-add-info'>
                     Additional Info
-                    <br><span style='margin-left:0'>" . $r['description'] . "</span>
-                  </div>
+                    <br><span style='margin-left:0'>" . //$request['description'] . 
+                    "</span>
+                  </div-->
                 </div>
                 <div class='button-container'> 
                   <button type='button' class='approve'><i class='fa fa-check'></i><span>Approve</span></button>
