@@ -1,0 +1,24 @@
+runtime: php55
+api_version: 1
+
+handlers:
+- url: /js
+  static_dir: js
+- url: /css
+  static_dir: css
+- url: /images
+  static_dir: images
+- url: /
+  script: index.html
+- url: /index.html
+  script: index.html
+- url: /calendar
+  script: calendar_view.php
+- url: /approval
+  script: approval.php
+- url: /weather
+  script: destin_weather.html
+- url: /videos
+  script: videos.html
+- url: /new-reservation
+  script: make_reservation.php

@@ -14,7 +14,7 @@ p {
   overflow: hidden;
   text-align: center;
   position: relative;
-  background: url('../images/view.jpg');
+  background: url('/images/view.jpg');
   background-size: 107%;
   background-repeat: no-repeat;
   background-position-y: 57%;

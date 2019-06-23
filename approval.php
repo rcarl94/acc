@@ -1,6 +1,11 @@
 <?php
+    session_start();
+
     require 'util.php';
 
+    date_default_timezone_set('UTC');
+
+    $SIGNIN_CLIENT_ID = '381768128087-crc9ctnn7edfvtiusrmjee32sjv8732j.apps.googleusercontent.com';
     $DEV_API_KEY = 'AIzaSyBIBNgeuBWrp2rP2qXtPFtpsusL62qbZjg';
     $API_KEY = $DEV_API_KEY;
     //$API_KEY = 'AIzaSyCOIxu7rd-NJKRHlVC-4sZjc08IGnmGL9Y';
@@ -12,10 +17,8 @@
         'public' => array('cid' => 'public', 'name' => 'RanDestin', 'id' => '2rtmtvb76ad0fkn5sib3cls00s@group.calendar.google.com', 'advance' => '0'),
         'public-test' => array('cid' => 'public-test', 'name' => 'RanDestin Test', 'id' => 'r9nuhp3j159sbnlpf7tch9hq7g@group.calendar.google.com', 'advance' => '0')
     );
-    session_start();
-       
-    /* under construction
-    function isTimeBooked($startdate,$enddate,$cal){
+
+    function isTimeBooked($startdate, $enddate, $cal){
         global $API_KEY;
         $token = getAccessToken();
         $result = sendGetRequest($token, 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?timeMax=' . $enddate . '&timeMin=' . $startdate . '&fields=items(end%2Cstart%2Csummary)&pp=1&key=' . $API_KEY);
@@ -27,67 +30,51 @@
             return false;
         }
     }
-    */
+
+    $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
+    if (isset($_SESSION['LastRequest']) && $_SESSION['LastRequest'] == $RequestSignature) {
+      header('Location: '.$_SERVER['PHP_SELF']);
+      die;
+    }
 
     $message = "";
     $token = getAccessToken();
 
     if(isset($_POST['submit-approve'])){
-        $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
-        if ($_SESSION['LastRequest'] == $RequestSignature) {
-          header('Location: '.$_SERVER['PHP_SELF']);
-          die;
-        } else {
-            // Check to see if everything was filled out properly.
-            if(date('Ymd') > date('Ymd',strtotime($_POST['a-start-date']))){
-                $message = 'You cannot make a booking in the past.  Please check your date.';
-            }
-            // Check to see if we are alowed to book this far in advance.
-            elseif(date('Ymd',strtotime($_POST['a-start-date'])) > date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['a-start-date'])))){
-                $message = 'You cannot book that far into the future.  You can only book ' . $calendars[$thecal]['advance'] . ' in the future.  Please try again.';
-                //$message .= date('Ymd',strtotime($_POST['a-start-date'])) . ' > ' . date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['a-start-date'])));
-            }
-            // Check and see if a booking already exists.
-            /*
-            elseif(isTimeBooked($_POST['a-start-date'],$_POST['end-date'],$calendars[$thecal]['id'])){
-                $message = 'Some of the dates you requested are not available. See the current reservations <a href="calendar_view.html">here</a>.';
-            }
-            */
-            // Everything is good, submit the event.
-            else {
-                $_SESSION['LastRequest'] = $RequestSignature;
-                $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$thecal]['id'] . "/events/" . $_POST['submit-approve'];
-                $response = sendGetRequest($token, $request);
-                $response = json_decode($response, true);
-                $response['start']['date'] = $_POST['a-start-date'];
-                $response['end']['date'] = $_POST['a-end-date'];
-
-                $postargs = createCalPost($response['summary'],$response['attendees'][0]['email'],$response['start']['date'],$response['start']['date'],$response['description']);
-                // add to public calendar
-                $result = sendPostRequest($API_KEY, $postargs, $token, $calendars[$public_cal]['id']);
-                // remove from requests calendar
-                $delresult = sendDeleteRequest($_POST['submit-approve'],$token,$calendars[$req_cal]['id']);
-                if (!empty($delresult))
-                  $result = 'ERROR';
-            }
-            var_dump($message);
+        /*
+        // Check and see if a booking already exists.
+        if (isTimeBooked($_POST['a-start-date'],$_POST['end-date'],$calendars[$thecal]['id'])){
+            $message = 'Some of the dates you requested are not available. See the current reservations <a href="calendar_view.html">here</a>.';
         }
-    } else if (isset($_POST['submit-deny'])) {
-        $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
-        if ($_SESSION['LastRequest'] == $RequestSignature) {
-          header('Location: '.$_SERVER['PHP_SELF']);
-          die;
-        } else {
+        */
+        // Everything is good, submit the event.
+        //else {
             $_SESSION['LastRequest'] = $RequestSignature;
-            $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$req_cal]['id'] . "/events/" . $_POST['submit-deny'];
+            $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$thecal]['id'] . "/events/" . $_POST['submit-approve'];
             $response = sendGetRequest($token, $request);
             $response = json_decode($response, true);
-            $denyname = $response['summary'];
-            $denyemail = $response['attendees'][0]['email'];
-            $denyresult = sendDeleteRequest($_POST['submit-deny'],$token,$calendars['requests']['id']);
-            if (empty($denyresult))
-              $denyresult = 'SUCCESS';
-        } 
+            $response['start']['date'] = $_POST['a-start-date'];
+            $response['end']['date'] = $_POST['a-end-date'];
+
+            $postargs = createCalPost($response['summary'],$response['attendees'][0]['email'],$response['start']['date'],$response['start']['date'],$response['description']);
+            // add to public calendar
+            $result = sendPostRequest($API_KEY, $postargs, $token, $calendars[$public_cal]['id']);
+            // remove from requests calendar
+            $delresult = sendDeleteRequest($_POST['submit-approve'],$token,$calendars[$req_cal]['id']);
+            if (!empty($delresult))
+              $result = 'ERROR';
+        //}
+    } else if (isset($_POST['submit-deny'])) {
+        $_SESSION['LastRequest'] = $RequestSignature;
+        $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$req_cal]['id'] . "/events/" . $_POST['submit-deny'];
+        $response = sendGetRequest($token, $request);
+        $response = json_decode($response, true);
+        $denyname = $response['summary'];
+        $denyemail = $response['attendees'][0]['email'];
+        $denyresult = sendDeleteRequest($_POST['submit-deny'],$token,$calendars['requests']['id']);
+        var_dump($denyresult);
+        if (empty($denyresult))
+          $denyresult = 'SUCCESS';
     }
     // get all requests
     $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$req_cal]['id'] . "/events";
@@ -101,10 +88,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width">
     <meta name="google-signin-scope" content="profile email">
-    <meta name="google-signin-client_id" content="381768128087-43r547722rcs9gofl153gps80ap2l42p.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="<?php echo $SIGNIN_CLIENT_ID; ?>">
     <title>RanDestin</title>
-    <link rel="shortcut icon" type="image/x-icon" href="images/schedule.ico" />
-    <link rel="stylesheet" type="text/css" href="css/app.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="/images/schedule.ico" />
+    <link rel="stylesheet" type="text/css" href="/css/app.css" />
     <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto:400,900" rel="stylesheet">
     <script src="js/jquery-3.3.1.min.js"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
@@ -121,31 +108,31 @@
     <div id="nav">
       <button id="menu-toggle"><i class="fa fa-bars"></i><i class="fa fa-arrow-left"></i></button>
       <div id="view-nav-btn" class="navBtnContainer">
-        <a href="calendar_view.html" class="button"><i class="fa fa-calendar fa-2x"></i><span>View Calendar</span></a>
+        <a href="/calendar.html" class="button"><i class="fa fa-calendar fa-2x"></i><span>View Calendar</span></a>
       </div>
       <div id="reserve-nav-btn" class="navBtnContainer">
-        <a href="make_reservation.php" class="button"><i class="fa fa-calendar-plus-o fa-2x"></i><span>Make a Reservation</span></a>
+        <a href="/new-reservation" class="button"><i class="fa fa-calendar-plus-o fa-2x"></i><span>Make a Reservation</span></a>
       </div>
       <div id="sbt-nav-btn" class="navBtnContainer"> 
         <a href="http://www.thesilverbeachtowersresort.com/" class="button"><i class="fa fa-question-circle-o fa-2x"></i><span>Silver Beach Towers</span></a>
       </div>
       <div id="approve-nav-btn" class="navBtnContainer">
-        <a href="approval.php" class="button"><i class="fa fa-check-circle-o fa-2x"></i><span>Pending Requests</span></a>
+        <a href="/approval" class="button"><i class="fa fa-check-circle-o fa-2x"></i><span>Pending Requests</span></a>
       </div>
       <div id="videos-nav-btn" class="navBtnContainer">
-        <a href="videos.html" class="button"><i class="fa fa-play-circle-o fa-2x"></i><span>Videos</span></a>
+        <a href="/videos" class="button"><i class="fa fa-play-circle-o fa-2x"></i><span>Videos</span></a>
       </div>
       <div id="beachcam-nav-btn" class="navBtnContainer">
         <a href="http://gulfcoastbeachcams.com/cameras/thebackporch-destin" class="button"><i class="fa fa-video-camera fa-2x"></i><span>Beach Cam</span></a>
       </div>
       <div id="weather-nav-btn" class="navBtnContainer">
-        <a href="destin_weather.html" class="button"><i class="fa fa-sun-o fa-2x"></i><span>Weather</span></a>
+        <a href="/weather" class="button"><i class="fa fa-sun-o fa-2x"></i><span>Weather</span></a>
       </div>
     </div>
     <div id="main">
-      <div id='alert-bar' style='display:<?php echo empty($result) ? 'none':'block'; ?>;background:<?php echo ($result=='ERROR') ? '#f2c1c0':'#9be4b9'; ?>'>
 <?php 
   if (!empty($result)) {
+    echo "<div id='alert-bar' style='background:" . ($result=='ERROR') ? '#f2c1c0':'#9be4b9' . "'>";
     if ($result == 'ERROR')
       echo 'There was a problem removing request: ' . $delresult;
     else {
@@ -189,7 +176,7 @@
     } 
 ?>
       <a href="#approve-modal" id="approve-modal-btn" style="display:none"></a>
-      <form id="approve-form" name="approve-form" method="post" action="approval.php">
+      <form id="approve-form" name="approve-form" method="post" action="/approval">
         <div id="approve-modal">
           <div style="text-align:right;padding-right:30px"><a id="close-modal-btn" class="close-approve-modal">&times;</a></div>
           <div class="modal-content">
@@ -205,7 +192,7 @@
       </form>
 
       <a href="#deny-modal" id="deny-modal-btn" style="display:none"></a>
-      <form id="deny-form" name="deny-form" method="post" action="approval.php">
+      <form id="deny-form" name="deny-form" method="post" action="/approval">
         <div id="deny-modal">
           <div style="text-align:right;padding-right:30px"><a id="close-modal-btn" class="close-deny-modal">&times;</a></div>
           <div class="modal-content">

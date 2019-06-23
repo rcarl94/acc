@@ -1,5 +1,73 @@
-  <?php
-    /* code below was adapted from http://cornempire.net/2012/01/15/part-3-oauth2-and-configuring-your-application-with-google/ */
+<?php
+    require_once __DIR__ . '/google-api-php-client-2.2.3/vendor/autoload.php';
+
+    function getClient() {
+        $client = new Google_Client();
+        $client->setApplicationName('randestin');
+        $client->setScopes(Google_Service_Calendar::CALENDAR);
+        $client->setAuthConfig('credentials.json');
+        $client->setAccessType('offline');
+        $client->setPrompt('select_account consent');
+
+        // Load previously authorized token from a file, if it exists.
+        // The file token.json stores the user's access and refresh tokens, and is
+        // created automatically when the authorization flow completes for the first
+        // time.
+        $tokenPath = 'token.json';
+        if (file_exists($tokenPath)) {
+            $accessToken = json_decode(file_get_contents($tokenPath), true);
+            $client->setAccessToken($accessToken);
+        }
+
+        // If there is no previous token or it's expired.
+        if ($client->isAccessTokenExpired()) {
+            // Refresh the token if possible, else fetch a new one.
+            if ($client->getRefreshToken()) {
+                $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+            } else {
+                // Request authorization from the user.
+                $authUrl = $client->createAuthUrl();
+                printf("Open the following link in your browser:\n%s\n", $authUrl);
+                print 'Enter verification code: ';
+                $authCode = trim(fgets(STDIN));
+
+                // Exchange authorization code for an access token.
+                $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
+                $client->setAccessToken($accessToken);
+
+                // Check to see if there was an error.
+                if (array_key_exists('error', $accessToken)) {
+                    throw new Exception(join(', ', $accessToken));
+                }
+            }
+            // Save the token to a file.
+            if (!file_exists(dirname($tokenPath))) {
+                mkdir(dirname($tokenPath), 0700, true);
+            }
+            file_put_contents($tokenPath, json_encode($client->getAccessToken()));
+        }
+        return $client;
+    }
+
+    function createCalendarEvent($name, $email, $start_date, $end_date, $additional_info) {
+        $event = new Google_Service_Calendar_Event(array(
+          'summary' => $name,
+          'description' => $additional_info,
+          'start' => array(
+            'dateTime' => $start_date,
+            'timeZone' => 'America/Chicago',
+          ),
+          'end' => array(
+            'dateTime' => $end_date,
+            'timeZone' => 'America/Chicago',
+          ),
+          'attendees' => array(
+            array('email' => $email, 'optional' => 'true'),
+          ),
+        ));
+    }
+
+    /* code below was adapted from http://cornempire.net/2012/01/15/part-3-oauth2-and-configuring-your-application-with-google/
     function createCalPost($name, $email, $startdate, $enddate, $addinfo) {
         $arg_list = func_get_args();
         foreach($arg_list as $key => $arg){
@@ -15,7 +83,9 @@
         $postargs->attendees = array(json_decode('{"email":"' . $email . '","optional":"true"}'));
         return json_encode($postargs);
     }
+    */
 
+    /*
     function getAccessToken(){
         $tokenURL = 'https://accounts.google.com/o/oauth2/token';
         $postData = array(
@@ -36,14 +106,16 @@
         $accessToken = $token->access_token;
         return $accessToken;
     }
+    */
 
-    function sendGetRequest($token,$request){
+    function sendGetRequest($request){
+        $client = getClient();
         $session = curl_init($request);
         curl_setopt($session, CURLOPT_HTTPGET, true);
         curl_setopt($session, CURLOPT_HEADER, false); 
         curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($session, CURLINFO_HEADER_OUT, false);
-        curl_setopt($session, CURLOPT_HTTPHEADER, array('Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
+        curl_setopt($session, CURLOPT_HTTPHEADER, array('Authorization:  Bearer ' . $client->getAccessToken(), 'X-JavaScript-User-Agent: randestin'));
          
         $response = curl_exec($session);
          
@@ -51,7 +123,8 @@
         return $response;
     }
 
-    function sendPostRequest($api_key, $postargs, $token, $cal){
+    function sendPostRequest($api_key, $postargs, $cal){
+        $client = getClient();
         $request = 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?sendNotifications=true&pp=1&key=' . $api_key;
          
         $session = curl_init($request);
@@ -61,7 +134,7 @@
         curl_setopt($session, CURLOPT_HEADER, false); 
         curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($session, CURLINFO_HEADER_OUT, true);
-        curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type:  application/json','Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
+        curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Authorization: Bearer ' . $client->getAccessToken(), 'X-JavaScript-User-Agent: randestin'));
          
         $response = curl_exec($session);
          
@@ -69,7 +142,8 @@
         return $response;
     }
 
-    function sendDeleteRequest($event_id, $token, $cal){
+    function sendDeleteRequest($event_id, $cal) {
+        $client = getClient();
         $request = 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events/' . $event_id;
         $postargs = ''; 
         $session = curl_init($request);
@@ -80,7 +154,7 @@
         curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
         //curl_setopt($session, CURLOPT_VERBOSE, true);
         curl_setopt($session, CURLINFO_HEADER_OUT, true);
-        curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type:  application/json','Authorization:  Bearer ' . $token,'X-JavaScript-User-Agent: RanDestin'));
+        curl_setopt($session, CURLOPT_HTTPHEADER, array('Content-Type:  application/json','Authorization:  Bearer ' . $client->getAccessToken(), 'X-JavaScript-User-Agent: RanDestin'));
          
         $response = curl_exec($session);
          

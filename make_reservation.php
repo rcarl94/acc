@@ -1,7 +1,6 @@
 <?php
     require 'util.php';
     session_start();
-    $API_KEY = 'AIzaSyCOIxu7rd-NJKRHlVC-4sZjc08IGnmGL9Y';
 
     $thecal = 'test'; // requests, test
     $message = "";
@@ -51,9 +50,12 @@
              */
             else {
                 $_SESSION['LastRequest'] = $RequestSignature;
-                $postargs = createCalPost($_POST['name'],$_POST['email'],$_POST['start-date'],$_POST['end-date'],$_POST['add-info']);
-                $token = getAccessToken();
-                $result = sendPostRequest($API_KEY, $postargs, $token, $calendars[$thecal]['id']);
+                //$postargs = createCalPost($_POST['name'],$_POST['email'],$_POST['start-date'],$_POST['end-date'],$_POST['add-info']);
+                //$result = sendPostRequest($API_KEY, $postargs, $calendars[$thecal]['id']);
+                $client = getClient();
+                $service = new Google_Service_Calendar($client);
+                $event = createCalendarEvent($_POST['name'],$_POST['email'],$_POST['start-date'],$_POST['end-date'],$_POST['add-info']);
+                $event = $service->events->insert($calendarId, $calendars[$thecal]['id']);
             }
         }
     }
@@ -64,8 +66,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width">
     <title>RanDestin</title>
-    <link rel="shortcut icon" type="image/x-icon" href="images/schedule.ico" />
-    <link rel="stylesheet" type="text/css" href="css/app.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="/images/schedule.ico" />
+    <link rel="stylesheet" type="text/css" href="/css/app.css" />
     <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto" rel="stylesheet">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="js/jquery-3.3.1.min.js"></script>
@@ -81,25 +83,25 @@
     <div id="nav">
       <button id="menu-toggle"><i class="fa fa-bars"></i><i class="fa fa-arrow-left"></i></button>
       <div id="view-nav-btn" class="navBtnContainer">
-        <a href="calendar_view.html" class="button"><i class="fa fa-calendar fa-2x"></i><span>View Calendar</span></a>
+        <a href="/calendar" class="button"><i class="fa fa-calendar fa-2x"></i><span>View Calendar</span></a>
       </div>
       <div id="reserve-nav-btn" class="navBtnContainer">
-        <a href="make_reservation.php" class="button"><i class="fa fa-calendar-plus-o fa-2x"></i><span>Make a Reservation</span></a>
+        <a href="/new-reservation" class="button"><i class="fa fa-calendar-plus-o fa-2x"></i><span>Make a Reservation</span></a>
       </div>
       <div id="sbt-nav-btn" class="navBtnContainer">
         <a href="http://www.thesilverbeachtowersresort.com/" class="button"><i class="fa fa-question-circle-o fa-2x"></i><span>Silver Beach Towers</span></a>
       </div>
       <div id="approve-nav-btn" class="navBtnContainer locked">
-        <a href="approval.php" class="button"><i class="fa fa-check-circle-o fa-2x"></i><span>Pending Requests</span></a>
+        <a href="/approval" class="button"><i class="fa fa-check-circle-o fa-2x"></i><span>Pending Requests</span></a>
       </div>
       <div id="videos-nav-btn" class="navBtnContainer">
-        <a href="videos.html" class="button"><i class="fa fa-play-circle-o fa-2x"></i><span>Videos</span></a>
+        <a href="/videos" class="button"><i class="fa fa-play-circle-o fa-2x"></i><span>Videos</span></a>
       </div>
       <div id="beachcam-nav-btn" class="navBtnContainer">
         <a href="http://gulfcoastbeachcams.com/cameras/thebackporch-destin" class="button"><i class="fa fa-video-camera fa-2x"></i><span>Beach Cam</span></a>
       </div>
       <div id="weather-nav-btn" class="navBtnContainer">
-        <a href="destin_weather.html" class="button"><i class="fa fa-sun-o fa-2x"></i><span>Weather</span></a>
+        <a href="/weather" class="button"><i class="fa fa-sun-o fa-2x"></i><span>Weather</span></a>
       </div>
     </div>
     <div id="main">
@@ -121,7 +123,7 @@
       if (!empty($message))
 		echo $message;
 	  else
-		echo 'An error occurred in processing your request. Please go back and <a href="make_reservation.php">re-submit</a>.';
+		echo 'An error occurred in processing your request. Please go back and <a href="/new-reservation">re-submit</a>.';
     }
 ?>
       </h2>
@@ -133,7 +135,7 @@
       </script>
       <h3 style="text-align:left">Please fill out the form below and submit your request</h3>
       <hr>
-      <form id="request-form" name="request-form" action="make_reservation.php" method="post"> 
+      <form id="request-form" name="request-form" action="/new-reservation" method="post"> 
         <div>
           <label for="name">Name
             <input id="name" name="name" type="text" required="required" placeholder="First Last"></input>

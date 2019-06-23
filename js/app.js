@@ -43,7 +43,6 @@ $(document).ready(function() {
 
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
-  console.log(profile.getEmail());
   if (profile.getEmail() == ADMIN_EMAIL) {
     unlock();
     if (window.location.pathname.split("/").pop() == "approval.php" && profile.getEmail() != ADMIN_EMAIL) {
@@ -51,7 +50,7 @@ function onSignIn(googleUser) {
       $("#requests").html("<h2>You must be signed in as the site manager to view this page. Navigating to home.</h2>");
       setTimeout(function() {
         window.location.replace("index.html");
-      }, 1000);
+      }, 2000);
     }
   }
 }
