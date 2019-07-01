@@ -5,18 +5,17 @@
         $client = new Google_Client();
         $client->setApplicationName('randestin');
         $client->setScopes(Google_Service_Calendar::CALENDAR);
-        $client->setAuthConfig('credentials.json');
+        //$client->setAuthConfig('credentials.json');
         $client->setAccessType('offline');
-        $client->setPrompt('select_account consent');
+        //$client->setPrompt('select_account consent');
 
         // Load previously authorized token from a file, if it exists.
         // The file token.json stores the user's access and refresh tokens, and is
         // created automatically when the authorization flow completes for the first
         // time.
-        $tokenPath = 'token.json';
-        if (file_exists($tokenPath)) {
-            $accessToken = json_decode(file_get_contents($tokenPath), true);
-            $client->setAccessToken($accessToken);
+        $token = getenv('RANDESTIN_ACCESS_TOKEN');
+        if ($token) {
+            $client->setAccessToken($token);
         }
 
         // If there is no previous token or it's expired.
@@ -25,20 +24,8 @@
             if ($client->getRefreshToken()) {
                 $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
             } else {
-                // Request authorization from the user.
-                $authUrl = $client->createAuthUrl();
-                printf("Open the following link in your browser:\n%s\n", $authUrl);
-                print 'Enter verification code: ';
-                $authCode = trim(fgets(STDIN));
-
-                // Exchange authorization code for an access token.
-                $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
-                $client->setAccessToken($accessToken);
-
-                // Check to see if there was an error.
-                if (array_key_exists('error', $accessToken)) {
-                    throw new Exception(join(', ', $accessToken));
-                }
+                // show error
+                print 'Unable to get refresh token'
             }
             // Save the token to a file.
             if (!file_exists(dirname($tokenPath))) {
@@ -50,7 +37,7 @@
     }
 
     function createCalendarEvent($name, $email, $start_date, $end_date, $additional_info) {
-        $event = new Google_Service_Calendar_Event(array(
+        return new Google_Service_Calendar_Event(array(
           'summary' => $name,
           'description' => $additional_info,
           'start' => array(

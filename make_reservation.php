@@ -22,8 +22,9 @@
     if (isset($_POST['submit'])) {
         $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
         if ($_SESSION['LastRequest'] == $RequestSignature) {
-          header('Location: ' . $_SERVER['PHP_SELF']);
-          die;
+          //header('Location: ' . $_SERVER['PHP_SELF']);
+          //die;
+          echo 'repeat request';
         } else {
             /*
              * Check to see if everything was filled out properly.
@@ -55,7 +56,8 @@
                 $client = getClient();
                 $service = new Google_Service_Calendar($client);
                 $event = createCalendarEvent($_POST['name'],$_POST['email'],$_POST['start-date'],$_POST['end-date'],$_POST['add-info']);
-                $event = $service->events->insert($calendarId, $calendars[$thecal]['id']);
+                $created_event = $service->events->insert($calendars[$thecal]['id'], $event);
+                var_dump($created_event);
             }
         }
     }

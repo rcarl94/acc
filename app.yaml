@@ -22,3 +22,5 @@ handlers:
   script: videos.html
 - url: /new-reservation
   script: make_reservation.php
+- url: /oauth
+  script: oauth-setup.php
