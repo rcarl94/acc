@@ -1,10 +1,6 @@
 <?php
-  header('X-Frame-Options: ALLOW-FROM https://calendar.google.com');
   $SIGNIN_CLIENT_ID = getenv('SIGNIN_CLIENT_ID');
-
-  $cal_id = (getenv('PROFILE') == 'TEST' ? '5qgugkc9qkku4surq5qdbhtejk%40group.calendar.google.com' : 'r9nuhp3j159sbnlpf7tch9hq7g%40group.calendar.google.com');
 ?>
-
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -15,6 +11,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="/images/schedule.ico" />
     <link rel="stylesheet" type="text/css" href="/css/app.css" />
     <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto" rel="stylesheet">
+    <script src="js/jquery-3.3.1.min.js"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
     <script src="https://use.fontawesome.com/23995a4842.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
@@ -51,14 +48,21 @@
       </div>
     </div>
     <div id="main">
-      <h2>Reservations</h2>
-      <p>Go to "Make a Reservation" to request a reservation</p>
-      <!--iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=2rtmtvb76ad0fkn5sib3cls00s%40group.calendar.google.com&amp;color=%231B887A&amp;ctz=America%2FChicago" style="border-width:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe-->
-      <iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=<?php echo $cal_id; ?>&amp;color=%231B887A&amp;ctz=America%2FChicago" style="border-width:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+      <div style="border: 1px solid #ccc;width:100%;margin-left:auto;margin-right:auto;">
+        <a href="http://www.accuweather.com/en/us/destin-fl/32541/weather-forecast/2231011" class="aw-widget-legal">
+        <!--
+        By accessing and/or using this code snippet, you agree to AccuWeather’s terms and conditions (in English) which can be found at http://www.accuweather.com/en/free-weather-widgets/terms and AccuWeather’s Privacy Statement (in English) which can be found at http://www.accuweather.com/en/privacy.
+        -->
+        </a><div id="awcc1482531558226" class="aw-widget-current"  data-locationkey="2231011" data-unit="f" data-language="en-us" data-useip="false" data-uid="awcc1482531558226"></div><script type="text/javascript" src="http://oap.accuweather.com/launch.js"></script>
+
+      <a href="http://www.accuweather.com/en/us/destin-fl/32541/weather-forecast/2231011" class="aw-widget-legal">
+      <!--
+      By accessing and/or using this code snippet, you agree to AccuWeather’s terms and conditions (in English) which can be found at http://www.accuweather.com/en/free-weather-widgets/terms and AccuWeather’s Privacy Statement (in English) which can be found at http://www.accuweather.com/en/privacy.
+      -->
+      </a><div id="awtd1482531558226" class="aw-widget-36hour"  data-locationkey="2231011" data-unit="f" data-language="en-us" data-useip="false" data-uid="awtd1482531558226" data-editlocation="false" data-lifestyle="fishing"></div><script type="text/javascript" src="http://oap.accuweather.com/launch.js"></script>
+      </div>
     </div>
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/jquery-ui.min.js"></script>
     <script src="js/animatedModal.min.js"></script>
-    <script src="js/app.js"></script>
+    <script src='js/app.js'></script>
   </body>
 </html>

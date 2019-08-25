@@ -39,29 +39,37 @@ $(document).ready(function() {
       changeYear: true
     });
   }
+
+  checkUser(null);
 });
 
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
   if (profile.getEmail() == ADMIN_EMAIL) {
     unlock();
+    checkUser(profile);
+  }
+}
+
+function checkUser(profile) {
+  if (profile != null) {
+    console.log(gapi);
+    if (gapi.auth2) {
+      if (gapi.auth2.isSignedIn.get() == true) {
+        var profile = auth2.currentUser.get().getBasicProfile();
+        if (profile.getEmail() == ADMIN_EMAIL) {
+          unlock();
+        }
+      }
+    }
+  } else {
+    console.log(profile);
     if (window.location.pathname.split("/").pop() == "approval.php" && profile.getEmail() != ADMIN_EMAIL) {
       // redirect to home page
       $("#requests").html("<h2>You must be signed in as the site manager to view this page. Navigating to home.</h2>");
       setTimeout(function() {
-        window.location.replace("index.html");
+        window.location.replace("/");
       }, 2000);
-    }
-  }
-}
-
-function checkUser() {
-  if (gapi.auth2) {
-    if (gapi.auth2.isSignedIn.get() == true) {
-      var profile = auth2.currentUser.get().getBasicProfile();
-      if (profile.getEmail() == ADMIN_EMAIL) {
-        unlock();
-      }
     }
   }
 }

@@ -1,6 +1,7 @@
 runtime: php55
 api_version: 1
-
+includes:
+  - env_variables.yaml
 handlers:
 - url: /js
   static_dir: js
@@ -9,18 +10,36 @@ handlers:
 - url: /images
   static_dir: images
 - url: /
-  script: index.html
-- url: /index.html
-  script: index.html
+  secure: always
+  redirect_http_response_code: 301
+  script: index.php
+- url: /index.php
+  secure: always
+  redirect_http_response_code: 301
+  script: index.php
 - url: /calendar
+  secure: always
+  redirect_http_response_code: 301
   script: calendar_view.php
 - url: /approval
+  secure: always
+  redirect_http_response_code: 301
   script: approval.php
 - url: /weather
-  script: destin_weather.html
+  secure: always
+  redirect_http_response_code: 301
+  script: destin_weather.php
 - url: /videos
-  script: videos.html
+  secure: always
+  redirect_http_response_code: 301
+  script: videos.php
 - url: /new-reservation
+  secure: always
+  redirect_http_response_code: 301
   script: make_reservation.php
 - url: /oauth
+  secure: always
+  redirect_http_response_code: 301
   script: oauth-setup.php
+- url: /privacy
+  script: privacy-policy.html
