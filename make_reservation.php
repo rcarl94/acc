@@ -2,7 +2,7 @@
     require 'util.php';
     session_start();
 
-    $thecal = 'test'; // requests, test
+    $req_cal = 'requests' . (getenv('PROFILE') == 'TEST' ? '-test' : '');
     $message = "";
     $calendars = array(
         'requests' => array(
@@ -11,10 +11,10 @@
             'id'      => 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com',
             'advance' => '0'
         ),
-        'test' => array(
+        'requests-test' => array(
             'cid'     => 'test',
             'name'    => 'Test',
-            'id'      => '0c4uu14q53o4n9te9k66vufmn4@group.calendar.google.com',
+            'id'      => 'nmk0mqsknqaomgj9dl8ju65jcs@group.calendar.google.com',
             'advance' => '0'
         )
     );
@@ -22,8 +22,8 @@
     if (isset($_POST['submit'])) {
         $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
         if ($_SESSION['LastRequest'] == $RequestSignature) {
-          header('Location: ' . $_SERVER['PHP_SELF']);
-          die;
+            header('Location: /new-reservation');
+            die;
         } else {
             /*
              * Check to see if everything was filled out properly.
@@ -33,15 +33,15 @@
             }
             /*
              * Check to see if we are alowed to book this far in advance.
-            elseif (date('Ymd',strtotime($_POST['start-date'])) > date('Ymd',strtotime('+' . $calendars[$thecal]['advance'],strtotime($_POST['start-date'])))){
-                $message = 'You cannot book that far into the future.  You can only book ' . $calendars[$thecal]['advance'] . ' in the future.  Please try again.';
+            elseif (date('Ymd',strtotime($_POST['start-date'])) > date('Ymd',strtotime('+' . $calendars[$req_cal]['advance'],strtotime($_POST['start-date'])))){
+                $message = 'You cannot book that far into the future.  You can only book ' . $calendars[$req_cal]['advance'] . ' in the future.  Please try again.';
             }
             */
             /*
              * Check and see if a booking already exists.
              */
             /*
-            elseif (isTimeBooked($_POST['start-date'],$_POST['end-date'],$calendars[$thecal]['id'])) {
+            elseif (isTimeBooked($_POST['start-date'],$_POST['end-date'],$calendars[$req_cal]['id'])) {
                 $message = 'Some of the dates you requested are not available. See the current reservations <a href="calendar_view.html">here</a>.';
             }
             */
@@ -50,12 +50,9 @@
              */
             else {
                 $_SESSION['LastRequest'] = $RequestSignature;
-                //$postargs = createCalPost($_POST['name'],$_POST['email'],$_POST['start-date'],$_POST['end-date'],$_POST['add-info']);
-                //$result = sendPostRequest($API_KEY, $postargs, $calendars[$thecal]['id']);
-                $client = getClient();
-                $service = new Google_Service_Calendar($client);
-                $event = createCalendarEvent($_POST['name'],$_POST['email'],$_POST['start-date'],$_POST['end-date'],$_POST['add-info']);
-                $event = $service->events->insert($calendarId, $calendars[$thecal]['id']);
+                $postargs = createCalPost($_POST['name'],$_POST['email'],$_POST['start-date'],$_POST['end-date'],$_POST['add-info']);
+                $result = sendPostRequest($postargs, $calendars[$req_cal]['id']);
+                var_dump($result);
             }
         }
     }
@@ -77,7 +74,7 @@
   <body>
     <div id="topbar">
       <div class="overlay">
-        <h1><a href="index.html">RanDestin</a></h1>
+        <h1><a href="/">RanDestin</a></h1>
       </div>
     </div>
     <div id="nav">
@@ -105,34 +102,26 @@
       </div>
     </div>
     <div id="main">
-      <h2 id="request-result">
 <?php 
   if (!empty($result)) {
+    echo '<div id="request-result">';
     $json_result = json_decode($result,true);
     if ($json_result['status'] == 'confirmed') {
-      echo 'Request Submitted';
-?>
-        <span style="display:block;font-size:16px;margin-top:20px;line-height:1.5;">
-<?php
-  echo "Name: " . $json_result['summary'] . "<br>Email: " . $json_result['attendees'][0]['email'] . "<br>Dates: " . $json_result['start']['date'] . " to " . $json_result['end']['date']; 
-  echo "<p>Thank you for using RanDestin.com to request condo time. Please check your inbox (possibly spam) for confirmation of your request. You will receive an email when your request is approved.</p>";
-?>
-        </span>
-<?php
+      echo "<p>Thanks! If that doesn't work for some reason, we'll contact you to work something out.</p>";
+      echo '<span style="display:block;font-size:16px;margin-top:20px;line-height:1.5;font-weight:bold">';
+      echo "Name: " . $json_result['summary'] . "<br>Dates: " . $json_result['start']['date'] . " to " . $json_result['end']['date']; 
+      echo "</span>";
     } else {
       if (!empty($message))
-		echo $message;
-	  else
-		echo 'An error occurred in processing your request. Please go back and <a href="/new-reservation">re-submit</a>.';
+        echo $message;
+      else
+        echo 'An error occurred in processing your request. Please go back and <a href="/new-reservation">re-submit</a>.';
     }
+    echo "</div>";
 ?>
-      </h2>
 <?php
-    } else {
+  } else {
 ?>
-      <script type="text/javascript">
-        $("#request-result").hide();
-      </script>
       <h3 style="text-align:left">Please fill out the form below and submit your request</h3>
       <hr>
       <form id="request-form" name="request-form" action="/new-reservation" method="post"> 
@@ -164,7 +153,7 @@
       </form>
     </div>
 <?php
-    }
+  }
 ?>
     <script src="js/animatedModal.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>

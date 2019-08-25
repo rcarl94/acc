@@ -1,28 +1,22 @@
 <?php
-    session_start();
-
     require 'util.php';
+    session_start();
 
     date_default_timezone_set('UTC');
 
-    $SIGNIN_CLIENT_ID = '381768128087-crc9ctnn7edfvtiusrmjee32sjv8732j.apps.googleusercontent.com';
-    $DEV_API_KEY = 'AIzaSyBIBNgeuBWrp2rP2qXtPFtpsusL62qbZjg';
-    $API_KEY = $DEV_API_KEY;
-    //$API_KEY = 'AIzaSyCOIxu7rd-NJKRHlVC-4sZjc08IGnmGL9Y';
-    $req_cal = 'requests-test';
-    $public_cal = 'public-test';
+    $SIGNIN_CLIENT_ID = getenv('SIGNIN_CLIENT_ID');
+
+    $req_cal = 'requests' . (getenv('PROFILE') == 'TEST' ? '-test' : '');
+    $public_cal = 'public' . (getenv('PROFILE') == 'TEST' ? '-test' : '');
     $calendars = array(
         'requests' => array('cid' => 'requests', 'name' => 'RanDestin Requests', 'id' => 'lhp36uvdi0hindme1qahpmp948@group.calendar.google.com', 'advance' => '0'),
-        'requests-test' => array('cid' => 'requests-test', 'name' => 'RanDestin Requests Test', 'id' => '0c4uu14q53o4n9te9k66vufmn4@group.calendar.google.com', 'advance' => '0'),
-        'public' => array('cid' => 'public', 'name' => 'RanDestin', 'id' => '2rtmtvb76ad0fkn5sib3cls00s@group.calendar.google.com', 'advance' => '0'),
-        'public-test' => array('cid' => 'public-test', 'name' => 'RanDestin Test', 'id' => 'r9nuhp3j159sbnlpf7tch9hq7g@group.calendar.google.com', 'advance' => '0')
+        'requests-test' => array('cid' => 'requests-test', 'name' => 'RanDestin Requests Test', 'id' => 'nmk0mqsknqaomgj9dl8ju65jcs@group.calendar.google.com', 'advance' => '0'),
+        'public' => array('cid' => 'public', 'name' => 'RanDestin', 'id' => 'r9nuhp3j159sbnlpf7tch9hq7g@group.calendar.google.com', 'advance' => '0'),
+        'public-test' => array('cid' => 'public-test', 'name' => 'RanDestin Test', 'id' => '5qgugkc9qkku4surq5qdbhtejk@group.calendar.google.com', 'advance' => '0')
     );
 
     function isTimeBooked($startdate, $enddate, $cal){
-        global $API_KEY;
-        $token = getAccessToken();
-        $result = sendGetRequest($token, 'https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?timeMax=' . $enddate . '&timeMin=' . $startdate . '&fields=items(end%2Cstart%2Csummary)&pp=1&key=' . $API_KEY);
-        echo $result;
+        $result = sendGetRequest('https://www.googleapis.com/calendar/v3/calendars/' . $cal . '/events?timeMax=' . $enddate . '&timeMin=' . $startdate . '&fields=items(end%2Cstart%2Csummary)&pp=1');
         if(strlen($result) > 5){
             return true;
         }
@@ -33,52 +27,49 @@
 
     $RequestSignature = md5($_SERVER['REQUEST_URI'] . print_r($_POST, true));
     if (isset($_SESSION['LastRequest']) && $_SESSION['LastRequest'] == $RequestSignature) {
-      header('Location: '.$_SERVER['PHP_SELF']);
+      header('Location: /approval');
       die;
     }
 
     $message = "";
-    $token = getAccessToken();
 
     if(isset($_POST['submit-approve'])){
         /*
         // Check and see if a booking already exists.
-        if (isTimeBooked($_POST['a-start-date'],$_POST['end-date'],$calendars[$thecal]['id'])){
+        if (isTimeBooked($_POST['a-start-date'],$_POST['end-date'],$calendars[$req_cal]['id'])){
             $message = 'Some of the dates you requested are not available. See the current reservations <a href="calendar_view.html">here</a>.';
         }
         */
         // Everything is good, submit the event.
         //else {
             $_SESSION['LastRequest'] = $RequestSignature;
-            $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$thecal]['id'] . "/events/" . $_POST['submit-approve'];
-            $response = sendGetRequest($token, $request);
+            $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$req_cal]['id'] . "/events/" . $_POST['submit-approve'];
+            $response = sendGetRequest($request);
             $response = json_decode($response, true);
             $response['start']['date'] = $_POST['a-start-date'];
             $response['end']['date'] = $_POST['a-end-date'];
 
-            $postargs = createCalPost($response['summary'],$response['attendees'][0]['email'],$response['start']['date'],$response['start']['date'],$response['description']);
+            $postargs = createCalPost($response['summary'],$response['attendees'][0]['email'],$response['start']['date'],$response['end']['date'],$response['description']);
             // add to public calendar
-            $result = sendPostRequest($API_KEY, $postargs, $token, $calendars[$public_cal]['id']);
+            $result = sendPostRequest($postargs, $calendars[$public_cal]['id']);
             // remove from requests calendar
-            $delresult = sendDeleteRequest($_POST['submit-approve'],$token,$calendars[$req_cal]['id']);
+            $delresult = sendDeleteRequest($_POST['submit-approve'],$calendars[$req_cal]['id']);
             if (!empty($delresult))
-              $result = 'ERROR';
+                $result = 'ERROR';
         //}
     } else if (isset($_POST['submit-deny'])) {
         $_SESSION['LastRequest'] = $RequestSignature;
         $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$req_cal]['id'] . "/events/" . $_POST['submit-deny'];
-        $response = sendGetRequest($token, $request);
+        $response = sendGetRequest($request);
         $response = json_decode($response, true);
         $denyname = $response['summary'];
-        $denyemail = $response['attendees'][0]['email'];
-        $denyresult = sendDeleteRequest($_POST['submit-deny'],$token,$calendars['requests']['id']);
-        var_dump($denyresult);
+        $denyresult = sendDeleteRequest($_POST['submit-deny'], $calendars[$req_cal]['id']);
         if (empty($denyresult))
           $denyresult = 'SUCCESS';
     }
     // get all requests
     $request = "https://www.googleapis.com/calendar/v3/calendars/" . $calendars[$req_cal]['id'] . "/events";
-    $response = sendGetRequest($token, $request);
+    $response = sendGetRequest($request);
     $response = json_decode($response, true);
     $requests = $response['items'];
 ?>
@@ -102,13 +93,13 @@
     <div class="g-signin2" id="signin" data-onsuccess="onSignIn"></div>
     <div id="topbar">
       <div class="overlay">
-        <h1><a href="index.html">RanDestin</a></h1>
+        <h1><a href="/">RanDestin</a></h1>
       </div>
     </div>
     <div id="nav">
       <button id="menu-toggle"><i class="fa fa-bars"></i><i class="fa fa-arrow-left"></i></button>
       <div id="view-nav-btn" class="navBtnContainer">
-        <a href="/calendar.html" class="button"><i class="fa fa-calendar fa-2x"></i><span>View Calendar</span></a>
+        <a href="/calendar" class="button"><i class="fa fa-calendar fa-2x"></i><span>View Calendar</span></a>
       </div>
       <div id="reserve-nav-btn" class="navBtnContainer">
         <a href="/new-reservation" class="button"><i class="fa fa-calendar-plus-o fa-2x"></i><span>Make a Reservation</span></a>
@@ -131,32 +122,31 @@
     </div>
     <div id="main">
 <?php 
-  if (!empty($result)) {
-    echo "<div id='alert-bar' style='background:" . ($result=='ERROR') ? '#f2c1c0':'#9be4b9' . "'>";
-    if ($result == 'ERROR')
-      echo 'There was a problem removing request: ' . $delresult;
-    else {
-      $json_result = json_decode($result,true);
-      if ($json_result['status'] == 'confirmed')
-        echo $json_result['summary'] . "'s dates have been moved to the reservations calendar.";
+    if (!empty($result)) {
+      echo "<div id='alert-bar' style='background:" . ($result == 'ERROR' ? '#f2c1c0':'#9be4b9') . "'>";
+      if ($result == 'ERROR')
+        echo 'There was a problem removing request: ' . $delresult;
+      else {
+        $json_result = json_decode($result,true);
+        if ($json_result['status'] == 'confirmed')
+          echo $json_result['summary'] . "'s dates have been moved to the reservations calendar";
+      }
+    } else if (!empty($denyresult)) {
+      if ($denyresult == 'SUCCESS')
+        echo $denyname . "'s request was denied";
     }
-  } else if (!empty($denyresult)) {
-    if ($denyresult == 'SUCCESS')
-      echo $denyname . "'s request was denied. Email " . $denyemail . " to suggest different dates.";
-  }
 ?>
       </div>
 <?php
-    echo '<h1>' . count($requests) . ' pending request(s)</h1>';
+    echo '<h2 style="text-align:center">' . count($requests) . ' pending request(s)</h2>';
     if (!empty($requests)) {
       foreach ($requests as $request) {
-        //var_dump($request);
         echo "<div class='request' id='" . $request['id'] . "'>
                 <div class='request-info'>
-                  <div style='float:left;width:70px;'>Name<br>Email<br>Dates</div>
+                  <div style='float:left;width:70px;'>Name<br>Dates</div>
                   <div style='float:left'>
                     <span class='req-name'>" . $request['summary'] . "</span><br>
-                    <span class='req-email'>" . $request['attendees'][0]['email'] . "</span><br>
+                    <!--span class='req-email'>" . $request['attendees'][0]['email'] . "</span><br-->
                     <span><font class='req-start-date'>" . $request['start']['date'] . "</font> to <font class='req-end-date'>" . $request['end']['date'] . "</font></span><br><br>
                   </div>
                   <!-- not available in request any longer...

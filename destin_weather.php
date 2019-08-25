@@ -1,9 +1,12 @@
+<?php
+  $SIGNIN_CLIENT_ID = getenv('SIGNIN_CLIENT_ID');
+?>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width">
     <meta name="google-signin-scope" content="profile email">
-    <meta name="google-signin-client_id" content="381768128087-crc9ctnn7edfvtiusrmjee32sjv8732j.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="<?php echo $SIGNIN_CLIENT_ID; ?>">
     <title>RanDestin</title>
     <link rel="shortcut icon" type="image/x-icon" href="/images/schedule.ico" />
     <link rel="stylesheet" type="text/css" href="/css/app.css" />
@@ -17,7 +20,7 @@
     <div class="g-signin2" id="signin" data-onsuccess="onSignIn"></div>
     <div id="topbar">
       <div class="overlay">
-        <h1><a href="index.html">RanDestin</a></h1>
+        <h1><a href="/">RanDestin</a></h1>
       </div>
     </div>
     <div id="nav">

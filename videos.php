@@ -1,23 +1,26 @@
+<?php
+  $SIGNIN_CLIENT_ID = getenv('SIGNIN_CLIENT_ID');
+?>
 <!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width">
     <meta name="google-signin-scope" content="profile email">
-    <meta name="google-signin-client_id" content="381768128087-crc9ctnn7edfvtiusrmjee32sjv8732j.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="<?php echo $SIGNIN_CLIENT_ID; ?>">
     <title>RanDestin</title>
     <link rel="shortcut icon" type="image/x-icon" href="/images/schedule.ico" />
     <link rel="stylesheet" type="text/css" href="/css/app.css" />
-    <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto|Muli" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
     <script src="https://use.fontawesome.com/23995a4842.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
   </head>
-  <body> 
+  <body>
     <div class="g-signin2" id="signin" data-onsuccess="onSignIn"></div>
     <div id="topbar">
       <div class="overlay">
-        <h1><a href="index.html">RanDestin</a></h1>
+        <h1><a href="/">RanDestin</a></h1>
       </div>
     </div>
     <div id="nav">
@@ -45,28 +48,13 @@
       </div>
     </div>
     <div id="main">
-      <div id="motto">
-        <p>&#34;It better be as clean when you leave as it was when you got there.&#34;<br><font style="color: #666666;text-shadow: none;"> - The Randy</font></p>
-      </div>
-      <!--div id="greeting">
-        <div>
-          <h4>A word from&#46;&#46;&#46;</h4>
-          <h1><strong>Randy and Gretchen</strong></h1>
-        </div>
-        <div>
-          <p>Custom message goes here</p>
-        </div>
-      </div-->
-      <div id="photos">
-        <img src="/images/fam-sunny.jpeg" />
-        <img src="/images/fearless-leader.jpeg" />
-        <img src="/images/sea-turtle.jpeg" />
-        <img src="/images/joe-fish.jpeg" />
+      <div id="videos">
+        <iframe src="https://www.youtube.com/embed/WQy8Mgn3Zt4?rel=0" frameborder="0" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/2HYlMKaw1jI?rel=0" frameborder="0" allowfullscreen></iframe>
       </div>
     </div>
-    <script src="/js/jquery-3.3.1.min.js"></script>
-    <script src="/js/jquery-ui.min.js"></script>
-    <script src="/js/animatedModal.min.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/animatedModal.min.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
