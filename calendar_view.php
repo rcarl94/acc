@@ -1,6 +1,7 @@
 <?php
   header('X-Frame-Options: ALLOW-FROM https://calendar.google.com');
-  $SIGNIN_CLIENT_ID = getenv('SIGNIN_CLIENT_ID');
+  $creds = json_decode(getenv('GOOGLE_CREDS'));
+  $SIGNIN_CLIENT_ID = $creds->web->client_id;
 
   $cal_id = (getenv('PROFILE') == 'TEST' ? '5qgugkc9qkku4surq5qdbhtejk%40group.calendar.google.com' : 'r9nuhp3j159sbnlpf7tch9hq7g%40group.calendar.google.com');
 ?>

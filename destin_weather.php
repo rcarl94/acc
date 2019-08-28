@@ -1,5 +1,6 @@
 <?php
-  $SIGNIN_CLIENT_ID = getenv('SIGNIN_CLIENT_ID');
+  $creds = json_decode(getenv('GOOGLE_CREDS'));
+  $SIGNIN_CLIENT_ID = $creds->web->client_id;
 ?>
 <html>
   <head>

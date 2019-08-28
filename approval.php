@@ -4,7 +4,8 @@
 
     date_default_timezone_set('UTC');
 
-    $SIGNIN_CLIENT_ID = getenv('SIGNIN_CLIENT_ID');
+    $creds = json_decode(getenv('GOOGLE_CREDS'));
+    $SIGNIN_CLIENT_ID = $creds->web->client_id;
 
     $req_cal = 'requests' . (getenv('PROFILE') == 'TEST' ? '-test' : '');
     $public_cal = 'public' . (getenv('PROFILE') == 'TEST' ? '-test' : '');
@@ -131,13 +132,11 @@
         if ($json_result['status'] == 'confirmed')
           echo $json_result['summary'] . "'s dates have been moved to the reservations calendar";
       }
+      echo "</div>";
     } else if (!empty($denyresult)) {
       if ($denyresult == 'SUCCESS')
         echo $denyname . "'s request was denied";
     }
-?>
-      </div>
-<?php
     echo '<h2 style="text-align:center">' . count($requests) . ' pending request(s)</h2>';
     if (!empty($requests)) {
       foreach ($requests as $request) {

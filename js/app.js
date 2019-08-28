@@ -1,4 +1,5 @@
-var ADMIN_EMAIL = "rcarl94@gmail.com"
+var ADMIN_EMAIL = "rdanderson1965@gmail.com";
+//var ADMIN_EMAIL = "rcarl94@gmail.com";
 
 $(document).ready(function() {
   // adjust for safari
@@ -39,38 +40,25 @@ $(document).ready(function() {
       changeYear: true
     });
   }
-
-  checkUser(null);
 });
 
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
   if (profile.getEmail() == ADMIN_EMAIL) {
     unlock();
-    checkUser(profile);
   }
+  checkUser(profile);
 }
 
 function checkUser(profile) {
-  if (profile != null) {
-    console.log(gapi);
-    if (gapi.auth2) {
-      if (gapi.auth2.isSignedIn.get() == true) {
-        var profile = auth2.currentUser.get().getBasicProfile();
-        if (profile.getEmail() == ADMIN_EMAIL) {
-          unlock();
-        }
-      }
-    }
-  } else {
-    console.log(profile);
-    if (window.location.pathname.split("/").pop() == "approval.php" && profile.getEmail() != ADMIN_EMAIL) {
-      // redirect to home page
-      $("#requests").html("<h2>You must be signed in as the site manager to view this page. Navigating to home.</h2>");
-      setTimeout(function() {
-        window.location.replace("/");
-      }, 2000);
-    }
+  var path = window.location.pathname;
+  var thisPage = path.substring(path.lastIndexOf('/') + 1);
+  if (thisPage == "approval" && profile.getEmail() != ADMIN_EMAIL) {
+    // redirect to home page
+    $("#main").html("<h2>You must be signed in as the site manager to view this page. Navigating to home.</h2>");
+    setTimeout(function() {
+      window.location.replace("/");
+    }, 3000);
   }
 }
 
